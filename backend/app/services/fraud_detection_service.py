@@ -78,10 +78,10 @@ async def assess_fraud_risk(parsed_data: dict, raw_text: str) -> RiskAssessment:
 
     # TO DO: implement individual component scoring logic 
     component_scores = {
-        "income_anomaly": 1 if any("Outlier" in i for i in issues) else 0,
-        "format_inconsistency": 1 if any("date format" in i for i in issues) else 0,
-        "metadata_conflict": 1 if any("Missing" in i for i in issues) else 0,
-        "ai_semantic_risk": ai_risk
+        "income_consistency": 1 if any("Outlier" in i for i in issues) else 0,
+        "income_trend": 1 if any("date format" in i for i in issues) else 0,
+        "document_authenticity": 1 if any("Missing" in i for i in issues) else 0,
+        "payment_frequency": ai_risk
     }
 
     # TO DO: replace None with actual scoring thresholds
