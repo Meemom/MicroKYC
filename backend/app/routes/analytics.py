@@ -1,24 +1,19 @@
-from fastapi import APIRouter, UploadFile, File
-from services.ocr_service import extract_text
-from services.parsing_service import parse_document
-from services.fraud_detection_service import assess_risk
+from fastapi import APIRouter
 
 
 router = APIRouter()
 
 
-@router.post("/gig_worker")
-async def verify_gig_worker(file: UploadFile = File(...)):
-    # Step 1: OCR
-    text = await extract_text(file)
-
-
-    # Step 2: Parse fields via LLM
-    parsed_data = await parse_document(text)
-
-
-    # Step 3: Fraud detection / risk score
-    risk_data = await assess_risk(parsed_data)
-
-
-    return {**parsed_data, **risk_data}
+@router.get("/summary")
+def analytics_summary():
+    # TO DO : Implement real analytics logic
+    # For now, return mock data
+    return {
+    "total_verified": 20,
+    "risk_distribution": {
+    "low": 12,
+    "medium": 6,
+    "high": 2
+    },
+    "top_platforms": ["Uber", "Fiverr", "DoorDash"]
+    }
