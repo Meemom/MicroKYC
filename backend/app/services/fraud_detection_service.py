@@ -1,5 +1,6 @@
 from models.risk_models import RiskAssessment
 import os 
+import statistics
 from google import genai
 from dotenv import load_dotenv
 
@@ -21,6 +22,28 @@ async def assess_fraud_risk(parsed_data: dict, raw_text: str) -> RiskAssessment:
     Returns a RiskAssessment Pydantic model."""
 
     # TO DO : implement format and consistency check (e.g. name, platform, etc.)
+    issues = []
+
+    required_fields = ["name", "platform", "income_estimate", "date_range"]
+    missing = [f for f in required_fields if not parsed_data.get(f)]
+    if missing:
+        issues.append(f"Missing fields: {', '.join(missing)}")
+
+    date_pattern = r"(\d{4}-\d{2}-\d{2})|([A-Za-z]{3,9}\s\d{4})"
+    date_matches = re.findall(date_pattern, raw_text)
+    if len(date_matches) > 1:
+        unique_formats = len(set([m[0] or m[1] for m in date_matches]))
+        if unique_formats > 1:
+            issues.append("Multiple date formats detected")
+
+    income_values = [int(num) for num in re.findall(r"\$?(\d{2,6})", raw_text)]
+    if income_values:
+        mean_val = statistics.mean(income_values)
+        std_val = statistics.pstdev(income_values) or 1
+        for val in income_values:
+            if abs(val - mean_val) > 2.5 * std_val:
+                issues.append(f"Outlier detected in income value: {val}")
+                break
 
     # GEMINI AI SCORING 
     prompt = f"""
