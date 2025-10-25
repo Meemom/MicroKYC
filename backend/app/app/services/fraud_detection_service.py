@@ -6,7 +6,7 @@ from dotenv import load_dotenv
 load_dotenv()
 client = genai.Client(api_key=os.getenv("GEMINI_API_KEY"))
 
-# TO DO: create function to accept weights for different risk factors from bank
+# TO DO: create function to accept weights for different risk factors from bank -> ICEBOX
 # these are just default values 
 WEIGHTS = {
      "income_consistency": 0.4, 
