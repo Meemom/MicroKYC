@@ -5,6 +5,7 @@ FROM python:3.11-slim
 ENV PYTHONUNBUFFERED=1
 ENV PYTHONDONTWRITEBYTECODE=1
 ENV APP_HOME=/app
+ENV PYTHONPATH=/app:/app/app
 
 WORKDIR $APP_HOME
 
@@ -20,10 +21,15 @@ COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
 # ---------- Copy Application Code ----------
-COPY app/ app/
+COPY ./app /app/app
+
+# ---------- Debug Python Path ----------
+RUN python -c "import sys; print('Python path:', sys.path)"
+RUN ls -la /app/app
 
 # ---------- Expose Port ----------
 EXPOSE 8000
 
 # ---------- Run Command ----------
-CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000", "--reload"]
+CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000", "--reload", "--root-path", "/app"]
+

@@ -1,15 +1,13 @@
-version: '3.9'
-
 services:
   backend:
-    build: .
+    build: ./backend/app
     container_name: microkyc_backend
     ports:
       - "8000:8000"
     environment:
-      - OPENAI_API_KEY=${OPENAI_API_KEY}
+      - GEMINI_API_KEY=${GEMINI_API_KEY}
       - GOOGLE_APPLICATION_CREDENTIALS=/app/app/keys/vision_key.json
     volumes:
-      - ./app:/app/app
-      - ./app/keys:/app/app/keys
+      - ./backend/app:/app/app
+      - ./backend/app/keys:/app/app/keys
     restart: always
