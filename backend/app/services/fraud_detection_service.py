@@ -1,5 +1,7 @@
 from models.risk_models import RiskAssessment
 import os 
+import re 
+import numpy as np 
 import statistics
 from google import genai
 from dotenv import load_dotenv
