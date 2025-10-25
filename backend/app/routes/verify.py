@@ -9,12 +9,12 @@ router = APIRouter()
 
 @router.post("/gig_worker")
 async def verify_gig_worker(file: UploadFile = File(...)):
-    # Step 1: OCR
+    # step 1: OCR 
     text = await extract_text(file)
 
 
-    # Step 2: Parse fields via LLM
-    parsed_data = await parse_document(text)
+    # step 2: Parse fields via gemini API 
+    parsed_data = await parse_document(text) # returns json dict
 
 
     # Step 3: Fraud detection / risk score
