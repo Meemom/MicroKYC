@@ -9,7 +9,7 @@ client = genai.Client(api_key=os.getenv("GEMINI_API_KEY"))
 
 response = client.models.generate_content(
     model="gemini-1.5-pro",
-    contents="Hello from GigPass!"
+    contents="Hello from GigIT!"
 )
 
 print(response.text)
@@ -49,7 +49,7 @@ async def parse_document(text: str) -> dict:
         json_str = response.text[start:end]
         parsed_json = json.loads(json_str)
     except Exception as e:
-        print("⚠️ Parsing failed:", e)
+        print("Parsing failed:", e)
         # Fallback: return mock data if Gemini response is not valid JSON
         parsed_json = {
             "name": "Unknown",
