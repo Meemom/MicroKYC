@@ -5,3 +5,4 @@ class RiskAssessment(BaseModel):
     risk_level: str
     ai_reason: str
     issues_detected: list[str]
+    component_scores: dict[ str, float ]
