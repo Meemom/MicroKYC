@@ -8,7 +8,7 @@ from dotenv import load_dotenv
 from google import genai
 
 # Prefer importing the Pydantic model via the package path so imports work
-from models.risk_models import RiskAssessment
+from app.models.risk_models import RiskAssessment
 
 load_dotenv()
 client = genai.Client(api_key=os.getenv("GEMINI_API_KEY"))
@@ -92,7 +92,7 @@ Text:
 """
     try:
         response = client.models.generate_content(
-            model="gemini-1.5-pro",
+            model="gemini-2.5-pro",
             contents=prompt
         )
         text = getattr(response, "text", str(response))

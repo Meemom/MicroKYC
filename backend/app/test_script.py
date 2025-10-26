@@ -1,6 +1,6 @@
 import asyncio
-from models.risk_models import RiskAssessment  # make sure your Pydantic model is correct
-from services.fraud_detection_service import assess_fraud_risk       # import the function from your code
+from app.models.risk_models import RiskAssessment  # make sure your Pydantic model is correct
+from app.services.fraud_detection_service import assess_fraud_risk       # import the function from your code
 
 raw_text = """
 Freelancer Income Report

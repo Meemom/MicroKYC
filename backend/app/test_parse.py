@@ -1,5 +1,5 @@
 import asyncio
-from services.parsing_service import parse_document
+from app.services.parsing_service import parse_document
 
 
 async def test_parse():

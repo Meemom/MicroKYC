@@ -1,7 +1,7 @@
 from fastapi import APIRouter, UploadFile, File
-from services.ocr_service import extract_text
-from services.parsing_service import parse_document
-from services.fraud_detection_service import assess_fraud_risk
+from app.services.ocr_service import extract_text
+from app.services.parsing_service import parse_document
+from app.services.fraud_detection_service import assess_fraud_risk
 
 
 router = APIRouter()
