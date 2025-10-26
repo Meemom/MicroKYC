@@ -30,6 +30,16 @@ const VerifyPage = () => {
     { number: 4, label: 'Review' },
   ];
 
+  // Available banks
+  const availableBanks = [
+    { id: 'BANK001', name: 'Chase Bank' },
+    { id: 'BANK002', name: 'Wells Fargo' },
+    { id: 'BANK003', name: 'Bank of America' },
+    { id: 'BANK004', name: 'Citibank' },
+    { id: 'BANK005', name: 'US Bank' },
+    { id: 'BANK006', name: 'PNC Bank' }
+  ];
+
   const gigPlatforms = [
     { id: 'uber', name: 'Uber', icon: '🚗' },
     { id: 'lyft', name: 'Lyft', icon: '🚕' },
