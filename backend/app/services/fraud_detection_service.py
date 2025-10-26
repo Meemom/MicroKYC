@@ -8,7 +8,7 @@ from dotenv import load_dotenv
 from google import genai
 
 # Prefer importing the Pydantic model via the package path so imports work
-from app.models.risk_models import RiskAssessment
+from models.risk_models import RiskAssessment
 
 load_dotenv()
 client = genai.Client(api_key=os.getenv("GEMINI_API_KEY"))
