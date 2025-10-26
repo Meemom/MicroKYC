@@ -1,9 +1,3 @@
-<<<<<<< Updated upstream
-from fastapi import APIRouter, UploadFile, File
-from services.ocr_service import extract_text
-from services.parsing_service import parse_document
-from services.fraud_detection_service import assess_fraud_risk
-=======
 # backend/app/routes/verify.py
 from fastapi import APIRouter, UploadFile, File, Form, HTTPException
 from fastapi.responses import JSONResponse
@@ -15,7 +9,6 @@ import time
 from app.services.ocr_service import extract_text_from_image
 from app.services.parsing_service import parse_document
 from app.services.fraud_detection_service import assess_fraud_risk
->>>>>>> Stashed changes
 
 router = APIRouter()
 

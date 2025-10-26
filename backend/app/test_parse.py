@@ -1,4 +1,5 @@
 import asyncio
+import os
 from services.parsing_service import parse_document
 
 

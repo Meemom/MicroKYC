@@ -1,10 +1,15 @@
+# backend/test_end_to_end.py
 import asyncio
+import json
 import os
-from app.services.parsing_service import parse_document
+import sys
 
-from app.services.parsing_service import parse_document
+# Allow "backend.app" imports when running from repo root
+sys.path.append(os.path.abspath("."))
 
-sample_text = """
+from app.services.fraud_detection_service import run_full_pipeline
+
+SAMPLE = """
 Upwork Payout Statement
 Creator: Alex Morgan
 Period: 2024-01-01 to 2024-03-25
@@ -20,10 +25,11 @@ Account ending in 4321
 """
 
 async def main():
-    result = await parse_document(sample_text)
-    print(result)
+    # Force local regex parse (no Gemini) if you want:
+    # os.environ["PARSER_MOCK"] = "1"
+    result = await run_full_pipeline(SAMPLE, style_mode="all")
+    print(json.dumps(result, indent=2))
 
 if __name__ == "__main__":
-    # require key
-    assert os.getenv("GEMINI_API_KEY"), "Set GEMINI_API_KEY first"
     asyncio.run(main())
+

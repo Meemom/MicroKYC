@@ -1,161 +1,102 @@
-<<<<<<< Updated upstream
-import os, json, re
-=======
+# backend/app/services/parsing_service.py
 import os
-import json
 import re
-from typing import Dict
->>>>>>> Stashed changes
-import google.generativeai as genai
+import json
+from typing import Dict, Any, Optional
+
 from dotenv import load_dotenv
-from app.models.parse_models import ParsedDocument
-
 load_dotenv()
-genai.configure(api_key=os.getenv("GEMINI_API_KEY"))
-<<<<<<< Updated upstream
-_model = genai.GenerativeModel("models/gemini-2.5-pro")
 
-SCHEMA_JSON_EXAMPLE = {
-    "name": "...",
-    "platform": "...",
-    "income_estimate": "...",
-    "date_range": "...",
-    "payment_frequency": "...",
-    "employer_or_client": "...",
-    "account_last4": "...."
-}
+# Optional Gemini
+_GEMINI_OK = False
+try:
+    import google.generativeai as genai
+    API_KEY = os.getenv("GEMINI_API_KEY")
+    if API_KEY:
+        genai.configure(api_key=API_KEY)
+        _GEMINI_OK = True
+except Exception:
+    _GEMINI_OK = False
 
-REQUIRED_KEYS = ["name", "platform", "income_estimate", "date_range"]
+MODEL_NAME = "models/gemini-2.5-pro"
 
-def _safe_json_extract(text: str) -> dict | None:
-    if not text:
-        return None
-    try:
-        start = text.find("{")
-        end = text.rfind("}") + 1
-        if start == -1 or end <= 0:
-            return None
-        return json.loads(text[start:end])
-    except Exception:
-        return None
-
-def _fallback_regex(text: str) -> dict:
-    """Very light fallback to avoid returning empty results."""
-    data = {k: None for k in SCHEMA_JSON_EXAMPLE.keys()}
-
-    m = re.search(r"(?:Name|Creator)\s*[:\-]\s*(.+)", text, flags=re.I)
-    if m: data["name"] = m.group(1).strip()
-
-    m = re.search(r"^(.*?)\s+(?:Payout|Paystub|Statement)", text, flags=re.I|re.M)
-    if m: data["platform"] = m.group(1).strip()
-
-    m = re.search(r"Total\s*[:\-]?\s*\$?([\d,]+(?:\.\d{2})?)", text, flags=re.I)
-    if m: data["income_estimate"] = m.group(1).replace(",", "")
-
-    m = re.search(r"(?:Period|Date\s*Range)\s*[:\-]\s*(.+)", text, flags=re.I)
-    if m: data["date_range"] = m.group(1).strip()
-
-    m = re.search(r"Account\s+ending\s+in\s+(\d{2,6})", text, flags=re.I)
-    if m: data["account_last4"] = m.group(1)[-4:]
-
-    return data
-
-async def parse_document(text: str) -> dict:
+def _regex_parse(text: str) -> Dict[str, Optional[str]]:
     """
-    Parse financial docs (paystubs/bank statements) to structured JSON using
-    Gemini 2.5 Pro, with Strong Repair (retry with 'fix' prompt) and regex fallback.
+    Extremely tolerant fallback for gig-style paystubs / statements.
+    Extracts: name, platform, date_range, total, account_last4 (if present).
     """
-    # -------- Pass 1: ask Gemini to return ONLY JSON --------
-    prompt = f"""
-You are a financial document parser. Analyze the document text and return ONLY a JSON object
-(no extra commentary). Use this schema and fill all fields (use null if unknown):
+    name = None
+    platform = None
+    date_range = None
+    total = None
+    last4 = None
 
-{json.dumps(SCHEMA_JSON_EXAMPLE, indent=2)}
+    # Name: "Name: John Doe" or "Creator: Alex Morgan"
+    m = re.search(r"(?:Name|Creator)\s*:\s*(.+)", text, re.IGNORECASE)
+    if m:
+        name = m.group(1).strip()
 
-Document Text:
-{text}
-"""
-    raw = None
-    try:
-        r = _model.generate_content(prompt)
-        raw = getattr(r, "text", None)
-        parsed = _safe_json_extract(raw)
-    except Exception:
-        parsed = None
+    # Platform: e.g. "Upwork Payout Statement" -> Upwork
+    m = re.search(r"^([A-Za-z0-9 ]+?)\s+(?:Payout|Earnings|Paystub)\b", text, re.IGNORECASE | re.MULTILINE)
+    if m:
+        platform = m.group(1).strip()
+    else:
+        m2 = re.search(r"Platform\s*:\s*([A-Za-z0-9 \-_/]+)", text, re.IGNORECASE)
+        platform = m2.group(1).strip() if m2 else None
 
-    # If missing or schema-incomplete -> Strong Repair pass
-    def _missing_required(d: dict | None) -> bool:
-        if not isinstance(d, dict):
-            return True
-        return any(k not in d or d[k] in (None, "", []) for k in REQUIRED_KEYS)
+    # Date range
+    m = re.search(r"(?:Period|Date Range)\s*:\s*([^\n]+)", text, re.IGNORECASE)
+    if m:
+        date_range = m.group(1).strip()
 
-    if _missing_required(parsed):
-        fix_prompt = f"""
-You previously attempted to parse a document but the JSON was missing required fields.
-Return ONLY valid JSON matching this exact schema (keys & types). No prose.
+    # Total: $11,750.00 / 11750
+    m = re.search(r"Total\s*:\s*\$?([0-9,]+(?:\.[0-9]{2})?)", text, re.IGNORECASE)
+    if m:
+        total = f"${m.group(1)}"
 
-Schema:
-{json.dumps(SCHEMA_JSON_EXAMPLE, indent=2)}
+    # Last4
+    m = re.search(r"Account ending in\s*(\d{4})", text, re.IGNORECASE)
+    if m:
+        last4 = m.group(1)
 
-If you don't know a value, put null. Do not add extra keys.
+    # Payment frequency (very rough)
+    payment_frequency = None
+    if re.search(r"\bweekly\b", text, re.IGNORECASE):
+        payment_frequency = "Weekly"
+    elif re.search(r"\bbi[- ]?weekly\b", text, re.IGNORECASE):
+        payment_frequency = "Biweekly"
+    elif re.search(r"\bmonthly\b", text, re.IGNORECASE):
+        payment_frequency = "Monthly"
+    else:
+        payment_frequency = "Irregular"
 
-Original Document Text:
-{text}
-"""
-        try:
-            r2 = _model.generate_content(fix_prompt)
-            raw2 = getattr(r2, "text", None)
-            parsed2 = _safe_json_extract(raw2)
-            if not _missing_required(parsed2):
-                parsed = parsed2
-        except Exception:
-            pass
-
-    # Final fallback: regex
-    if _missing_required(parsed):
-        parsed = _fallback_regex(text)
-
-    # Merge with defaults and validate
-    defaults = {k: None for k in SCHEMA_JSON_EXAMPLE.keys()}
-    merged = {**defaults, **(parsed or {})}
-
-    # Pydantic validation/normalization
-    return ParsedDocument(**merged).dict()
-=======
-
-MODEL_NAME = "models/gemini-2.5-pro"  # from list_models()
-
-def _fallback_parse(text: str) -> Dict:
-    # Very light heuristics if the API fails
-    parsed = {
-        "name": None,
-        "platform": None,
-        "income_estimate": None,
-        "date_range": None,
-        "payment_frequency": None,
-        "employer_or_client": None,
-        "account_last4": None,
+    return {
+        "name": name or "Unknown",
+        "platform": platform or "Unknown",
+        "income_estimate": total or "Unknown",
+        "date_range": date_range or "Unknown",
+        "payment_frequency": payment_frequency or "Unknown",
+        "employer_or_client": platform or "Unknown",
+        "account_last4": last4 or "Unknown",
     }
-    m = re.search(r"Name:\s*([^\n]+)", text, re.I)
-    if m: parsed["name"] = m.group(1).strip()
-    m = re.search(r"Platform:\s*([^\n]+)", text, re.I)
-    if m: parsed["platform"] = m.group(1).strip()
-    m = re.search(r"Total:\s*\$?([\d,]+\.\d{2})", text, re.I)
-    if m: parsed["income_estimate"] = f"${m.group(1)}"
-    m = re.search(r"(Period|Date Range):\s*([^\n]+)", text, re.I)
-    if m: parsed["date_range"] = m.group(2).strip()
-    m = re.search(r"Account .*?(\d{4})", text, re.I)
-    if m: parsed["account_last4"] = m.group(1)
-    return parsed
 
-async def parse_document(text: str) -> Dict:
+async def parse_document(text: str) -> Dict[str, str]:
+    """
+    Try Gemini (if configured); otherwise fallback to regex.
+    Returns **strings** for every field.
+    """
+    # Quick short-circuit via env if you want to force local behavior
+    if os.getenv("PARSER_MOCK", "0") == "1" or not _GEMINI_OK:
+        return _regex_parse(text)
+
     prompt = f"""
-You are a financial document parser AI. Analyze the text below and extract key details.
+You are a financial document parser for gig worker paystubs & payout statements.
+Extract the fields below as plain JSON (no extra text):
 
 Text:
 {text}
 
-Return ONLY a JSON object with the following fields (no explanation outside JSON):
+Return JSON with these exact string keys:
 {{
   "name": "...",
   "platform": "...",
@@ -168,17 +109,16 @@ Return ONLY a JSON object with the following fields (no explanation outside JSON
 """
     try:
         resp = genai.generate_content(model=MODEL_NAME, contents=prompt)
-        raw = resp.text or ""
-        start = raw.find("{"); end = raw.rfind("}") + 1
-        candidate = raw[start:end] if start != -1 and end != -1 else "{}"
-        data = json.loads(candidate)
-    except Exception as e:
-        # print(f"Gemini parse failed: {e}")  # keep quiet in prod
-        data = _fallback_parse(text)
+        raw = (getattr(resp, "text", "") or "").strip()
 
-    # Ensure all fields exist
-    defaults = ParsedDocument().model_dump()
-    merged = {**defaults, **{k: (v if v != "" else None) for k,v in data.items()}}
-    # Validate & normalize
-    return ParsedDocument(**merged).model_dump()
->>>>>>> Stashed changes
+        # Extract first JSON block
+        start = raw.find("{")
+        end = raw.rfind("}") + 1
+        parsed = json.loads(raw[start:end]) if start != -1 and end > start else {}
+    except Exception:
+        parsed = {}
+
+    # Normalize + fill via regex if missing
+    base = _regex_parse(text)
+    base.update({k: (str(parsed.get(k)) if parsed.get(k) is not None else base[k]) for k in base.keys()})
+    return base

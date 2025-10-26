@@ -1,18 +1,3 @@
-<<<<<<< Updated upstream
-import pytesseract
-from fastapi import UploadFile
-from models.ocr_models import OCRResult  # optional if you have this model
-
-async def extract_text(file: UploadFile) -> str:
-    # Save uploaded file temporarily
-    contents = await file.read()
-    with open(f"/tmp/{file.filename}", "wb") as f:
-        f.write(contents)
-
-    # OCR extraction
-    text = pytesseract.image_to_string(f"/tmp/{file.filename}")
-    return text
-=======
 import os
 from dotenv import load_dotenv
 import google.generativeai as genai
@@ -47,4 +32,3 @@ async def extract_text_from_image(file: UploadFile) -> str:
     except Exception as e:
         print(f"⚠️ OCR Error: {e}")
         return ""
->>>>>>> Stashed changes
