@@ -1,11 +1,11 @@
 import os 
-from google import genai
+import google.generativeai as genai
 from dotenv import load_dotenv
 from app.models.parse_models import ParsedDocument
 
 load_dotenv()
 
-client = genai.Client(api_key=os.getenv("GEMINI_API_KEY"))
+genai.configure(api_key=os.getenv("GEMINI_API_KEY"))
 
 
 async def parse_document(text: str) -> dict:
@@ -29,21 +29,19 @@ async def parse_document(text: str) -> dict:
     """
 
     try:
-        response = client.models.generate_content(
-            model=os.getenv("GEMINI_MODEL", "gemini-2.5-pro"),
-            contents=prompt
-        )
+        model = genai.GenerativeModel(os.getenv("GEMINI_MODEL", "gemini-1.5-flash"))
+        response = model.generate_content(prompt)
 
         # Gemini might return natural language text, so we’ll try to extract the JSON cleanly
         import json
-        text = getattr(response, "text", str(response))
-        start = text.find("{")
-        end = text.rfind("}") + 1
+        response_text = response.text
+        start = response_text.find("{")
+        end = response_text.rfind("}") + 1
         if start != -1 and end > start:
-            json_str = text[start:end]
+            json_str = response_text[start:end]
             parsed_json = json.loads(json_str)
         else:
-            parsed_json = json.loads(text)
+            parsed_json = json.loads(response_text)
     except Exception as e:
         # If the Gemini call fails (no API key, model missing, network), fallback to mock data
         print("Gemini parse failed or not available, returning mock parsed data:", repr(e))
