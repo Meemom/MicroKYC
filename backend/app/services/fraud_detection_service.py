@@ -8,7 +8,7 @@ from dotenv import load_dotenv
 import google.generativeai as genai
 # from google import genai
 
-from app.models.risk_models import RiskAssessment
+from models.risk_models import RiskAssessment
 
 load_dotenv()
 

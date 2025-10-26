@@ -1,7 +1,7 @@
 import os 
 import google.generativeai as genai
 from dotenv import load_dotenv
-from app.models.parse_models import ParsedDocument
+from models.parse_models import ParsedDocument
 
 load_dotenv()
 
