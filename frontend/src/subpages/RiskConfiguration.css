@@ -1,0 +1,475 @@
+/* RiskConfiguration.css */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+
+/* Color Variables */
+:root {
+  --primary-blue: #1A2B4C;
+  --secondary-blue: #1976D2;
+  --white: #FFFFFF;
+  --subtle-grey: #A9B1C2;
+  --light-background: #F5F7FA;
+  --border-color: #E5E7EB;
+  --sidebar-bg: #F9FAFB;
+  --success-green: #10B981;
+  --warning-orange: #F59E0B;
+  --info-blue: #3B82F6;
+  --purple: #8B5CF6;
+}
+
+.risk-config-page {
+  display: flex;
+  min-height: 100vh;
+  background-color: var(--light-background);
+  font-family: 'Inter', sans-serif;
+}
+
+/* Sidebar */
+.sidebar {
+  width: 280px;
+  background-color: var(--white);
+  border-right: 1px solid var(--border-color);
+  display: flex;
+  flex-direction: column;
+  position: sticky;
+  top: 0;
+  height: 100vh;
+}
+
+.sidebar-header {
+  padding: 32px 24px;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.sidebar-logo {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.sidebar-title {
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--primary-blue);
+  line-height: 1.2;
+}
+
+.sidebar-subtitle {
+  font-size: 12px;
+  color: var(--subtle-grey);
+  font-weight: 500;
+}
+
+.sidebar-nav {
+  flex: 1;
+  padding: 24px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.nav-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 16px;
+  border: none;
+  background: none;
+  border-radius: 10px;
+  font-size: 15px;
+  font-weight: 500;
+  color: var(--subtle-grey);
+  cursor: pointer;
+  transition: all 0.2s;
+  font-family: 'Inter', sans-serif;
+  text-align: left;
+}
+
+.nav-item:hover {
+  background-color: var(--light-background);
+  color: var(--primary-blue);
+}
+
+.nav-item.active {
+  background-color: #E0F2FE;
+  color: var(--secondary-blue);
+}
+
+.nav-item svg {
+  flex-shrink: 0;
+}
+
+.sidebar-footer {
+  padding: 16px;
+  border-top: 1px solid var(--border-color);
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+/* Main Content */
+.risk-config-main {
+  flex: 1;
+  padding: 48px;
+  overflow-y: auto;
+}
+
+.config-header {
+  margin-bottom: 40px;
+}
+
+.config-title {
+  font-size: 36px;
+  font-weight: 800;
+  color: var(--primary-blue);
+  margin-bottom: 12px;
+  letter-spacing: -0.5px;
+}
+
+.config-subtitle {
+  font-size: 16px;
+  color: var(--subtle-grey);
+  line-height: 1.6;
+}
+
+/* Config Grid */
+.config-grid {
+  display: grid;
+  grid-template-columns: 1fr 400px;
+  gap: 32px;
+}
+
+/* Criteria Panel */
+.criteria-panel {
+  background-color: var(--white);
+  border-radius: 20px;
+  padding: 32px;
+  box-shadow: 0 2px 8px rgba(26, 43, 76, 0.06);
+}
+
+.panel-title {
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--primary-blue);
+  margin-bottom: 24px;
+}
+
+.criteria-list {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.criterion-item {
+  padding: 20px;
+  background-color: var(--light-background);
+  border-radius: 16px;
+  border: 2px solid transparent;
+  transition: all 0.2s;
+}
+
+.criterion-item:hover {
+  border-color: var(--secondary-blue);
+  background-color: var(--white);
+}
+
+.criterion-header {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.drag-handle {
+  cursor: move;
+  padding: 4px;
+}
+
+.criterion-info {
+  flex: 1;
+}
+
+.criterion-label {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--primary-blue);
+  margin-bottom: 4px;
+}
+
+.criterion-description {
+  font-size: 13px;
+  color: var(--subtle-grey);
+  margin: 0;
+  line-height: 1.4;
+}
+
+/* Slider */
+.slider-container {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.weight-slider {
+  flex: 1;
+  height: 8px;
+  border-radius: 4px;
+  outline: none;
+  -webkit-appearance: none;
+  appearance: none;
+  cursor: pointer;
+}
+
+.weight-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: var(--white);
+  border: 3px solid var(--secondary-blue);
+  cursor: pointer;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  transition: transform 0.2s;
+}
+
+.weight-slider::-webkit-slider-thumb:hover {
+  transform: scale(1.2);
+}
+
+.weight-slider::-moz-range-thumb {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: var(--white);
+  border: 3px solid var(--secondary-blue);
+  cursor: pointer;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  transition: transform 0.2s;
+}
+
+.weight-slider::-moz-range-thumb:hover {
+  transform: scale(1.2);
+}
+
+.weight-value {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--primary-blue);
+  min-width: 50px;
+  text-align: right;
+}
+
+/* Distribution Panel */
+.distribution-panel {
+  background-color: var(--white);
+  border-radius: 20px;
+  padding: 32px;
+  box-shadow: 0 2px 8px rgba(26, 43, 76, 0.06);
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+}
+
+/* Donut Chart */
+.donut-chart-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+}
+
+.donut-chart {
+  width: 240px;
+  height: 240px;
+  transform: rotate(-90deg);
+}
+
+.donut-segment {
+  transition: opacity 0.3s;
+}
+
+.donut-segment:hover {
+  opacity: 0.8;
+}
+
+.donut-percentage {
+  font-size: 42px;
+  font-weight: 800;
+  fill: var(--primary-blue);
+  transform: rotate(90deg);
+  transform-origin: center;
+}
+
+.donut-label {
+  font-size: 14px;
+  fill: var(--subtle-grey);
+  font-weight: 500;
+  transform: rotate(90deg);
+  transform-origin: center;
+}
+
+/* Legend */
+.legend {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.legend-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 12px;
+  background-color: var(--light-background);
+  border-radius: 8px;
+}
+
+.legend-color {
+  width: 16px;
+  height: 16px;
+  border-radius: 4px;
+  flex-shrink: 0;
+}
+
+.legend-label {
+  flex: 1;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--primary-blue);
+}
+
+.legend-value {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--primary-blue);
+}
+
+/* Action Buttons */
+.action-buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.btn-save {
+  padding: 14px 24px;
+  background-color: var(--secondary-blue);
+  color: var(--white);
+  border: none;
+  border-radius: 12px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  font-family: 'Inter', sans-serif;
+  transition: all 0.2s;
+}
+
+.btn-save:hover {
+  background-color: #1565C0;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(25, 118, 210, 0.3);
+}
+
+.btn-reset {
+  padding: 14px 24px;
+  background-color: transparent;
+  color: var(--subtle-grey);
+  border: 2px solid var(--border-color);
+  border-radius: 12px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  font-family: 'Inter', sans-serif;
+  transition: all 0.2s;
+}
+
+.btn-reset:hover {
+  border-color: var(--subtle-grey);
+  color: var(--primary-blue);
+  background-color: var(--light-background);
+}
+
+/* Responsive Design */
+@media (max-width: 1200px) {
+  .config-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .distribution-panel {
+    order: -1;
+  }
+}
+
+@media (max-width: 768px) {
+  .risk-config-page {
+    flex-direction: column;
+  }
+
+  .sidebar {
+    width: 100%;
+    height: auto;
+    position: static;
+  }
+
+  .sidebar-nav {
+    flex-direction: row;
+    overflow-x: auto;
+  }
+
+  .risk-config-main {
+    padding: 24px;
+  }
+
+  .config-title {
+    font-size: 28px;
+  }
+
+  .config-subtitle {
+    font-size: 14px;
+  }
+
+  .criteria-panel,
+  .distribution-panel {
+    padding: 24px;
+  }
+
+  .donut-chart {
+    width: 200px;
+    height: 200px;
+  }
+
+  .donut-percentage {
+    font-size: 36px;
+  }
+}
+
+@media (max-width: 480px) {
+  .config-title {
+    font-size: 24px;
+  }
+
+  .criterion-item {
+    padding: 16px;
+  }
+
+  .criterion-label {
+    font-size: 14px;
+  }
+
+  .criterion-description {
+    font-size: 12px;
+  }
+
+  .weight-value {
+    font-size: 16px;
+  }
+
+  .donut-chart {
+    width: 180px;
+    height: 180px;
+  }
+
+  .donut-percentage {
+    font-size: 32px;
+  }
+}

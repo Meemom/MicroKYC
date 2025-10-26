@@ -6,6 +6,7 @@ import DashboardPage from './pages/DashboardPage';
 import BankLogin from './subpages/BankLogin';
 import UserLogin from './subpages/UserLogin';
 import ApplicationStatusPage from './pages/ApplicationStatusPage';
+import RiskConfiguration from './subpages/RiskConfiguration';
 
 function App() {
   return (
@@ -14,9 +15,10 @@ function App() {
         <Route path="/" element={<LandingPage />} />
         <Route path="/bank-login" element={<BankLogin />} />
         <Route path="/user-login" element={<UserLogin />} />
-        <Route path="/application-results" element={<ApplicationStatusPage />} />
+        <Route path="/application-status" element={<ApplicationStatusPage />} />
         <Route path="/verify" element={<VerifyPage />} />
         <Route path="/dashboard" element={<DashboardPage />} />
+        <Route path="/risk-configuration" element={<RiskConfiguration />} />
       </Routes>
     </BrowserRouter>
   );

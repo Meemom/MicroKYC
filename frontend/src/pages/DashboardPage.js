@@ -1,10 +1,12 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import './DashboardPage.css';
 import actionRequiredApps from '../test_data/action_required_apps.js'; 
 import allApplications from '../test_data/application_data.js'; 
 
 const DashboardPage = () => {
   const [activeTab, setActiveTab] = useState('all');
+  const navigate = useNavigate();
 
   const getFilteredApplications = () => {
     if (activeTab === 'all') return allApplications;
@@ -36,6 +38,9 @@ const DashboardPage = () => {
               </svg>
             </div>
             <span className="logo-text">GigIT</span>
+            <button onClick={() => navigate('/risk-configuration')}>
+            Risk Configuration
+            </button>
           </div>
 
           <div className="search-bar">

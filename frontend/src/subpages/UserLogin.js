@@ -98,7 +98,7 @@ const UserLogin = () => {
         {/* Logo */}
         <div className="login-logo">
           <svg width="48" height="48" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path d="M16 4L4 10V16C4 23 10 28 16 28C22 28 28 23 28 16V10L16 4Z" fill="#1976D2"/>
+          <path d="M16 4L4 10V16C4 23 10 28 16 28C22 28 28 23 28 16V10L16 4Z" fill="#1A2B4C"/>
           </svg>
           <h1 className="logo-title">GigIT</h1>
         </div>

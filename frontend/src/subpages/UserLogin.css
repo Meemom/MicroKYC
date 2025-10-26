@@ -15,7 +15,7 @@
 
 .login-page {
   min-height: 100vh;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, var(--primary-blue) 0%, var(--subtle-grey) 100%);
   display: flex;
   justify-content: center;
   align-items: center;
@@ -145,7 +145,7 @@
 /* Submit Button */
 .btn-submit {
   padding: 14px 24px;
-  background: linear-gradient(135deg, var(--secondary-blue) 0%, #1565C0 100%);
+  background: linear-gradient(135deg, var(--primary-blue) 0%, #08386f 100%);
   color: var(--white);
   border: none;
   border-radius: 12px;
