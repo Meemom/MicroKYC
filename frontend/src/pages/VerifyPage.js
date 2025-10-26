@@ -13,7 +13,6 @@ const VerifyPage = () => {
     address: '',
     ssn: '',
     dateOfBirth: '',
-    bankId: '', 
     platforms: [],
     monthlyIncome: '',
     workDuration: '',
@@ -29,15 +28,6 @@ const VerifyPage = () => {
     { number: 2, label: 'Gig Work' },
     { number: 3, label: 'Financials' },
     { number: 4, label: 'Review' },
-  ];
-
-  const availableBanks = [
-    { id: 'BANK001', name: 'Chase Bank' },
-    { id: 'BANK002', name: 'Wells Fargo' },
-    { id: 'BANK003', name: 'Bank of America' },
-    { id: 'BANK004', name: 'Citibank' },
-    { id: 'BANK005', name: 'US Bank' },
-    { id: 'BANK006', name: 'PNC Bank' }
   ];
 
   const gigPlatforms = [
@@ -152,6 +142,7 @@ const VerifyPage = () => {
     const newErrors = {};
     
     if (currentStep === 1) {
+      if (!formData.bankId) newErrors.bankId = 'Please select a bank'; // NEW: Bank ID validation
       if (!formData.fullName) newErrors.fullName = 'Full name is required';
       if (!formData.email) newErrors.email = 'Email is required';
       if (!formData.phone) newErrors.phone = 'Phone number is required';
@@ -212,10 +203,12 @@ const VerifyPage = () => {
         
         console.log('Application submitted:', submittedApp);
         
-        alert(`✅ Application ${submittedApp.id} submitted successfully!\n\nYour application is now being reviewed. You can check the status in the bank's dashboard.`);
+        const selectedBank = availableBanks.find(bank => bank.id === formData.bankId);
+        
+        alert(`✅ Application ${submittedApp.id} submitted successfully!\n\nYour application has been sent to ${selectedBank?.name || 'the bank'}.\n\nYou can check the status in the bank's dashboard by logging in with Bank ID: ${formData.bankId}`);
         
         setIsSubmitting(false);
-        navigate('/dashboard');
+        navigate('/user-login');
         
       } catch (error) {
         console.error('Submission error:', error);
@@ -289,6 +282,27 @@ const VerifyPage = () => {
               <p className="section-subtitle">Please provide your personal details as they appear on your official documents.</p>
 
               <div className="form-grid">
+                {/* Bank Selection - NEW */}
+                <div className="form-group full-width bank-selection">
+                  <label htmlFor="bankId">Select Your Bank *</label>
+                  <select
+                    id="bankId"
+                    name="bankId"
+                    value={formData.bankId}
+                    onChange={handleInputChange}
+                    className={errors.bankId ? 'error' : ''}
+                  >
+                    <option value="">Choose a bank...</option>
+                    {availableBanks.map(bank => (
+                      <option key={bank.id} value={bank.id}>
+                        {bank.name} (ID: {bank.id})
+                      </option>
+                    ))}
+                  </select>
+                  <p className="field-helper">Your application will be sent to this bank for review</p>
+                  {errors.bankId && <span className="error-message">{errors.bankId}</span>}
+                </div>
+
                 <div className="form-group full-width">
                   <label htmlFor="fullName">Full Name</label>
                   <input
@@ -571,6 +585,13 @@ const VerifyPage = () => {
                   <h3 className="review-section-title">Personal Information</h3>
                   <div className="review-grid">
                     <div className="review-item">
+                      <span className="review-label">Selected Bank</span>
+                      <span className="review-value">
+                        {availableBanks.find(b => b.id === formData.bankId)?.name || 'Not selected'} 
+                        {formData.bankId && ` (${formData.bankId})`}
+                      </span>
+                    </div>
+                    <div className="review-item">
                       <span className="review-label">Full Name</span>
                       <span className="review-value">{formData.fullName}</span>
                     </div>
@@ -700,7 +721,9 @@ const VerifyPage = () => {
 
             {currentStep === 1 && (
               <div className="tip-section">
-                <h4>Why we ask for this</h4>
+                <h4>Why Select a Bank?</h4>
+                <p>Your application will be sent directly to the bank you select. Make sure to choose the bank you'd like to work with for your mortgage.</p>
+                <h4 style={{marginTop: '16px'}}>Why we ask for this</h4>
                 <p>We use your personal information to verify your identity and comply with federal regulations. Your data is encrypted and secure.</p>
               </div>
             )}
