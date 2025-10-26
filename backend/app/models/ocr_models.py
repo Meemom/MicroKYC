@@ -1,4 +1,4 @@
-from pydantic import BaseModel 
+from pydantic import BaseModel
 
 class OCRResult(BaseModel):
-    raw_text: str   
+    text: str

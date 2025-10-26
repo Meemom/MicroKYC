@@ -7,7 +7,6 @@ from typing import Dict, Optional
 from dotenv import load_dotenv
 from google import genai
 
-# Prefer importing the Pydantic model via the package path so imports work
 from app.models.risk_models import RiskAssessment
 
 load_dotenv()
@@ -91,11 +90,9 @@ Text:
 {raw_text}
 """
     try:
-        response = client.models.generate_content(
-            model="gemini-1.5-pro",
-            contents=prompt
-        )
-        text = getattr(response, "text", str(response))
+        model = genai.GenerativeModel("gemini-1.5-flash")
+        response = model.generate_content(prompt)
+        text = response.text
         start = text.find("{")
         end = text.rfind("}") + 1
         if start != -1 and end != -1 and end > start:
