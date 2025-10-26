@@ -1,8 +1,8 @@
 import asyncio
-from tkinter.filedialog import test
 from services.parsing_service import parse_document
 
-async def tesgt():
+
+async def test_parse():
     fake_text = """
     Pay Stub for John Doe
     Platform: DoorDash
@@ -13,4 +13,6 @@ async def tesgt():
     parsed = await parse_document(fake_text)
     print(parsed)
 
-asyncio.run(test())
+
+if __name__ == "__main__":
+    asyncio.run(test_parse())
