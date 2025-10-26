@@ -1,4 +1,4 @@
-[
+const bankData = [
     {
       "bank_id": "B001",
       "bank_name": "TD",
@@ -41,3 +41,4 @@
     }
   ]
   
+  export default bankData;
