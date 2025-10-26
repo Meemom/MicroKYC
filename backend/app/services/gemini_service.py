@@ -1,52 +1,54 @@
-import os
-from google.generativeai import Client  # Gemini 2.5 Pro client
+from google.generativeai import Client
 from PyPDF2 import PdfReader
 from PIL import Image
-import pytesseract
+import pytesseract  # Optional, only if you want local OCR fallback
 
-# Initialize Gemini 2.5 Pro client
-client = Client(api_key=os.getenv("GOOGLE_API_KEY"))
-
-def extract_text_from_pdf(file_path: str) -> str:
-    """Extract text from a PDF file."""
-    reader = PdfReader(file_path)
-    text = ""
-    for page in reader.pages:
-        text += page.extract_text() or ""
-    return text
-
-def extract_text_from_image(file_path: str) -> str:
-    """Extract text from an image using pytesseract."""
-    return pytesseract.image_to_string(Image.open(file_path))
-
-def extract_text_from_text_file(file_path: str) -> str:
-    """Read plain text file."""
-    with open(file_path, "r", encoding="utf-8") as f:
-        return f.read()
+# Initialize Gemini client (replace with your actual API key)
+client = Client(api_key="YOUR_GEMINI_API_KEY")
 
 def process_file(file_path: str, file_type: str = "text") -> str:
     """
-    Process a file and return Gemini-generated response.
-
-    file_type: "text", "pdf", "image"
+    Process a file via Gemini 2.5 Pro API.
+    Supports 'pdf', 'image', and plain 'text' files.
+    Returns extracted or generated content.
     """
-    # Step 1: Extract text
     if file_type == "pdf":
-        text = extract_text_from_pdf(file_path)
+        # Extract text from PDF locally
+        reader = PdfReader(file_path)
+        text = ""
+        for page in reader.pages:
+            text += page.extract_text() or ""
+        if not text.strip():
+            return "No text found in PDF."
+        # Optionally, send text to Gemini to summarize or analyze
+        response = client.chat_completions.create(
+            model="gemini-2.5",
+            messages=[
+                {"role": "user", "content": f"Please summarize the following text:\n{text}"}
+            ],
+        )
+        return response.choices[0].message.content
+
     elif file_type == "image":
-        text = extract_text_from_image(file_path)
-    else:
-        text = extract_text_from_text_file(file_path)
+        # Use local OCR to extract text from image
+        img = Image.open(file_path)
+        text = pytesseract.image_to_string(img)
+        if not text.strip():
+            return "No text found in image."
+        # Optionally, send text to Gemini for processing
+        response = client.chat_completions.create(
+            model="gemini-2.5",
+            messages=[
+                {"role": "user", "content": f"Please summarize the following text extracted from an image:\n{text}"}
+            ],
+        )
+        return response.choices[0].message.content
 
-    # Step 2: Call Gemini 2.5 Pro
-    response = client.chat(
-        model="gemini-2.5-pro",
-        messages=[
-            {"role": "user", "content": text}
-        ],
-        temperature=0.7,
-        max_output_tokens=500
-    )
-
-    # Step 3: Return generated content
-    return response["content"][0]["text"]  # adapt if Gemini response format changes
+    else:  # plain text
+        with open(file_path, "r", encoding="utf-8") as f:
+            text = f.read()
+        response = client.chat_completions.create(
+            model="gemini-2.5",
+            messages=[{"role": "user", "content": f"Please analyze this text:\n{text}"}],
+        )
+        return response.choices[0].message.content
