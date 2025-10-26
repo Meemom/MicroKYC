@@ -56,7 +56,10 @@ const LandingPage = () => {
               Reduce risk and automate verification<br />
               with reliable, real-time data.
             </p>
-            <button className="btn btn-secondary">Partner Login</button>
+            <button 
+            className="btn btn-secondary"
+            onClick={() => navigate('/bank-login')}
+            >Partner Login</button>
           </div>
         </div>
       </section>
