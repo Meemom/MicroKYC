@@ -1,7 +1,9 @@
 import React from 'react';
 import './LandingPage.css';
+import { useNavigate } from 'react-router-dom';
 
 const LandingPage = () => {
+  const navigate = useNavigate();
   return (
     <div className="landing-page">
       {/* Header */}
@@ -42,7 +44,9 @@ const LandingPage = () => {
               Simplify your mortgage application and<br />
               prove your income easily.
             </p>
-            <button className="btn btn-primary">Get Started</button>
+            <button 
+            className="btn btn-primary"
+            onClick={() => navigate("/user-login")}>Get Started</button>
           </div>
 
           <div className="cta-card">
