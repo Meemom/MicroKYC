@@ -156,4 +156,7 @@ Text:
         risk_score=risk_score,
         risk_level=risk_level,
         summary=summary,
+        ai_reason=ai_reason, 
+        issues_detected=issues,
+        component_scores=component_scores
     )

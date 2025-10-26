@@ -1,6 +1,6 @@
 import asyncio
 from app.models.risk_models import RiskAssessment  # make sure your Pydantic model is correct
-from fraud_detection_service import assess_fraud_risk       # import the function from your code
+from app.services.fraud_detection_service import assess_fraud_risk       # import the function from your code
 
 raw_text = """
 Freelancer Income Report
@@ -35,6 +35,6 @@ parsed_data = {
 
 async def main():
     risk: RiskAssessment = await assess_fraud_risk(parsed_data, raw_text)
-    print(risk.json(indent=2))
+    print(risk.model_dump_json(indent=2))
 
 asyncio.run(main())
