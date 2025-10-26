@@ -1,12 +1,35 @@
-import React from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, { useEffect } from 'react';
+import { useNavigate, useLocation } from 'react-router-dom';
 import './ApplicationStatusPage.css';
 
-// This component can handle different statuses: 'accepted', 'denied', 'pending'
-const ApplicationStatusPage = ({ status = 'accepted', applicantName = 'Jane Doe', applicationId = 'GIG-8675309', submittedDate = 'October 26, 2023' }) => {
+const ApplicationStatusPage = () => {
   const navigate = useNavigate();
+  const location = useLocation();
 
-  // Configuration for different status types
+  // Get user from route state or localStorage
+  const user = location.state?.user || JSON.parse(localStorage.getItem("loggedInUser"));
+
+  // Redirect if no user found
+  useEffect(() => {
+    if (!user) {
+      navigate('/login', { state: { from: location.pathname } });
+    }
+  }, [user, navigate, location]);
+
+  if (!user) return null;
+
+  const { username, application_status, user_id } = user;
+
+  // Map backend status to display status
+  const statusMapping = {
+    approved: 'accepted',
+    denied: 'denied',
+    pending: 'pending'
+  };
+
+  const status = statusMapping[application_status] || 'pending';
+
+  // Status configurations
   const statusConfig = {
     accepted: {
       icon: (
@@ -17,7 +40,7 @@ const ApplicationStatusPage = ({ status = 'accepted', applicantName = 'Jane Doe'
       ),
       iconBg: '#D1FAE5',
       title: 'Application Accepted',
-      subtitle: `Congratulations, ${applicantName}!`,
+      subtitle: `Congratulations, ${username}!`,
       nextSteps: [
         {
           icon: (
@@ -48,7 +71,7 @@ const ApplicationStatusPage = ({ status = 'accepted', applicantName = 'Jane Doe'
       ),
       iconBg: '#FEE2E2',
       title: 'Application Denied',
-      subtitle: `We're sorry, ${applicantName}`,
+      subtitle: `We're sorry, ${username}`,
       nextSteps: [
         {
           icon: (
@@ -57,7 +80,7 @@ const ApplicationStatusPage = ({ status = 'accepted', applicantName = 'Jane Doe'
             </svg>
           ),
           title: 'Review Denial Reasons',
-          description: 'We\'ve sent a detailed explanation to your email. Common reasons include insufficient income documentation or debt-to-income ratio.'
+          description: "We've sent a detailed explanation to your email. Common reasons include insufficient income documentation or debt-to-income ratio."
         },
         {
           icon: (
@@ -66,7 +89,7 @@ const ApplicationStatusPage = ({ status = 'accepted', applicantName = 'Jane Doe'
             </svg>
           ),
           title: 'Reapply in the Future',
-          description: 'You can reapply after addressing the concerns mentioned in the denial letter. We\'re here to help you succeed.'
+          description: "You can reapply after addressing the concerns mentioned in the denial letter. We're here to help you succeed."
         }
       ]
     },
@@ -79,7 +102,7 @@ const ApplicationStatusPage = ({ status = 'accepted', applicantName = 'Jane Doe'
       ),
       iconBg: '#FEF3C7',
       title: 'Application Under Review',
-      subtitle: `Thank you for your patience, ${applicantName}`,
+      subtitle: `Thank you for your patience, ${username}`,
       nextSteps: [
         {
           icon: (
@@ -97,13 +120,13 @@ const ApplicationStatusPage = ({ status = 'accepted', applicantName = 'Jane Doe'
             </svg>
           ),
           title: 'Check Your Email',
-          description: 'We\'ll notify you immediately once a decision has been made. Keep an eye on your inbox and dashboard.'
+          description: "We'll notify you immediately once a decision has been made. Keep an eye on your inbox and dashboard."
         }
       ]
     }
   };
 
-  const currentStatus = statusConfig[status] || statusConfig.accepted;
+  const currentStatus = statusConfig[status];
 
   const handleReturnToDashboard = () => {
     navigate('/dashboard');
@@ -111,25 +134,23 @@ const ApplicationStatusPage = ({ status = 'accepted', applicantName = 'Jane Doe'
 
   return (
     <div className="status-page">
-      {/* Header Navigation */}
+      {/* Header */}
       <header className="status-header">
-        <div className="status-logo">
+        <div className="logo">
           <svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path d="M16 4L4 10V16C4 23 10 28 16 28C22 28 28 23 28 16V10L16 4Z" fill="#1976D2"/>
+          <path d="M16 4L4 10V16C4 23 10 28 16 28C22 28 28 23 28 16V10L16 4Z" fill="#1A2B4C"/>
           </svg>
           <span className="status-logo-text">GigIT</span>
         </div>
         <nav className="status-nav">
-          <button className="nav-link">Dashboard</button>
-          <button className="nav-link">Applications</button>
-          <button className="nav-link">Profile</button>
+          <button className="nav-link" onClick={() => navigate('/profile')}>Profile</button>
           <button className="icon-btn-nav">
             <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
               <path d="M10 2C5.58 2 2 5.58 2 10C2 14.42 5.58 18 10 18C14.42 18 18 14.42 18 10C18 5.58 14.42 2 10 2ZM11 14H9V12H11V14ZM11 10H9V6H11V10Z" fill="#A9B1C2"/>
             </svg>
           </button>
           <div className="user-avatar-nav">
-            <img src="https://i.pravatar.cc/150?img=1" alt="User" />
+            <img src="https://i.pravatar.cc/150?img=1" alt={username} />
           </div>
         </nav>
       </header>
@@ -163,14 +184,9 @@ const ApplicationStatusPage = ({ status = 'accepted', applicantName = 'Jane Doe'
             </div>
           </div>
 
-          {/* Return Button */}
-          <button className="btn-return-dashboard" onClick={handleReturnToDashboard}>
-            Return to Dashboard
-          </button>
-
           {/* Application Info */}
           <p className="application-info">
-            Application ID: {applicationId} | Submitted: {submittedDate}
+            Application ID: {user_id} | Submitted: October 26, 2023
           </p>
         </div>
       </main>
@@ -179,3 +195,4 @@ const ApplicationStatusPage = ({ status = 'accepted', applicantName = 'Jane Doe'
 };
 
 export default ApplicationStatusPage;
+

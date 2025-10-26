@@ -30,10 +30,10 @@
   border-bottom: 1px solid var(--border-color);
 }
 
-.status-logo {
+.logo {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 12px;
 }
 
 .status-logo-text {

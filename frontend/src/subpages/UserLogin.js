@@ -4,28 +4,35 @@ import userData from '../test_data/user_data.js';
 
 const UserLogin = () => {
   const [username, setUsername] = useState('');
-  const [password, setPassword] = useState(''); // optional if you want a demo password check
+  const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const navigate = useNavigate();
 
   const handleLogin = (e) => {
     e.preventDefault();
 
-    // Find user in demo data
+    // Find the user in demo data
     const user = userData.find(u => u.username === username);
+
+    // Username check
     if (!user) {
       setError('User not found');
       return;
     }
-    
+
+    // Password check
+    if (user.password !== password) {
+      setError('Incorrect password');
+      return;
+    }
+
     setError('');
 
-    // Decide navigation based on application_status
-    if (user.application_status === 'incomplete') {
-      navigate('/verify'); // go back to verification page
-    } else {
-      navigate('/application-results'); // go to results page
-    }
+    // Save to local storage so refresh doesn't lose the data
+    localStorage.setItem("loggedInUser", JSON.stringify(user));
+
+    // Navigate with user data in state (for first load)
+    navigate('/application-results', { state: { user } });
   };
 
   return (
