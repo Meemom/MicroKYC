@@ -1,7 +1,12 @@
+<<<<<<< Updated upstream
 import os, asyncio
 # allow "app.*" imports when running from backend/
 import sys
 sys.path.insert(0, os.path.dirname(__file__))
+=======
+import asyncio
+from app.services.parsing_service import parse_document
+>>>>>>> Stashed changes
 
 from app.services.parsing_service import parse_document
 

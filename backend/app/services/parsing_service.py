@@ -1,10 +1,18 @@
+<<<<<<< Updated upstream
 import os, json, re
+=======
+import os
+import json
+import re
+from typing import Dict
+>>>>>>> Stashed changes
 import google.generativeai as genai
 from dotenv import load_dotenv
 from app.models.parse_models import ParsedDocument
 
 load_dotenv()
 genai.configure(api_key=os.getenv("GEMINI_API_KEY"))
+<<<<<<< Updated upstream
 _model = genai.GenerativeModel("models/gemini-2.5-pro")
 
 SCHEMA_JSON_EXAMPLE = {
@@ -113,3 +121,64 @@ Original Document Text:
 
     # Pydantic validation/normalization
     return ParsedDocument(**merged).dict()
+=======
+
+MODEL_NAME = "models/gemini-2.5-pro"  # from list_models()
+
+def _fallback_parse(text: str) -> Dict:
+    # Very light heuristics if the API fails
+    parsed = {
+        "name": None,
+        "platform": None,
+        "income_estimate": None,
+        "date_range": None,
+        "payment_frequency": None,
+        "employer_or_client": None,
+        "account_last4": None,
+    }
+    m = re.search(r"Name:\s*([^\n]+)", text, re.I)
+    if m: parsed["name"] = m.group(1).strip()
+    m = re.search(r"Platform:\s*([^\n]+)", text, re.I)
+    if m: parsed["platform"] = m.group(1).strip()
+    m = re.search(r"Total:\s*\$?([\d,]+\.\d{2})", text, re.I)
+    if m: parsed["income_estimate"] = f"${m.group(1)}"
+    m = re.search(r"(Period|Date Range):\s*([^\n]+)", text, re.I)
+    if m: parsed["date_range"] = m.group(2).strip()
+    m = re.search(r"Account .*?(\d{4})", text, re.I)
+    if m: parsed["account_last4"] = m.group(1)
+    return parsed
+
+async def parse_document(text: str) -> Dict:
+    prompt = f"""
+You are a financial document parser AI. Analyze the text below and extract key details.
+
+Text:
+{text}
+
+Return ONLY a JSON object with the following fields (no explanation outside JSON):
+{{
+  "name": "...",
+  "platform": "...",
+  "income_estimate": "...",
+  "date_range": "...",
+  "payment_frequency": "...",
+  "employer_or_client": "...",
+  "account_last4": "...."
+}}
+"""
+    try:
+        resp = genai.generate_content(model=MODEL_NAME, contents=prompt)
+        raw = resp.text or ""
+        start = raw.find("{"); end = raw.rfind("}") + 1
+        candidate = raw[start:end] if start != -1 and end != -1 else "{}"
+        data = json.loads(candidate)
+    except Exception as e:
+        # print(f"Gemini parse failed: {e}")  # keep quiet in prod
+        data = _fallback_parse(text)
+
+    # Ensure all fields exist
+    defaults = ParsedDocument().model_dump()
+    merged = {**defaults, **{k: (v if v != "" else None) for k,v in data.items()}}
+    # Validate & normalize
+    return ParsedDocument(**merged).model_dump()
+>>>>>>> Stashed changes
