@@ -1,8 +1,10 @@
 import React, { useState } from 'react';
-import './VerifyPage.css';
 import { useNavigate } from 'react-router-dom';
+import ApplicationService from '../services/ApplicationService';
+import './VerifyPage.css';
 
 const VerifyPage = () => {
+  const navigate = useNavigate();
   const [currentStep, setCurrentStep] = useState(1);
   const [formData, setFormData] = useState({
     fullName: '',
@@ -11,17 +13,16 @@ const VerifyPage = () => {
     address: '',
     ssn: '',
     dateOfBirth: '',
-    // Gig Work
+    bankId: '', 
     platforms: [],
     monthlyIncome: '',
     workDuration: '',
-    // Documents
     gigWorkDocs: [],
     financialDocs: []
   });
   const [errors, setErrors] = useState({});
   const [uploadingFiles, setUploadingFiles] = useState(false);
-  const navigate = useNavigate();
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const steps = [
     { number: 1, label: 'Personal Info' },
@@ -30,7 +31,15 @@ const VerifyPage = () => {
     { number: 4, label: 'Review' },
   ];
 
-  // Gig platforms options
+  const availableBanks = [
+    { id: 'BANK001', name: 'Chase Bank' },
+    { id: 'BANK002', name: 'Wells Fargo' },
+    { id: 'BANK003', name: 'Bank of America' },
+    { id: 'BANK004', name: 'Citibank' },
+    { id: 'BANK005', name: 'US Bank' },
+    { id: 'BANK006', name: 'PNC Bank' }
+  ];
+
   const gigPlatforms = [
     { id: 'uber', name: 'Uber', icon: '🚗' },
     { id: 'lyft', name: 'Lyft', icon: '🚕' },
@@ -72,7 +81,7 @@ const VerifyPage = () => {
 
   const validateFile = (file) => {
     const validTypes = ['application/pdf', 'image/png', 'image/jpeg', 'image/jpg'];
-    const maxSize = 10 * 1024 * 1024; // 10MB
+    const maxSize = 10 * 1024 * 1024;
 
     if (!validTypes.includes(file.type)) {
       return { valid: false, error: 'Only PDF, PNG, and JPG files are allowed' };
@@ -98,7 +107,7 @@ const VerifyPage = () => {
           type: file.type,
           uploadDate: new Date().toISOString(),
           status: 'verified',
-          file: file // Store actual file for demo
+          file: file
         });
       } else {
         fileErrors.push(`${file.name}: ${validation.error}`);
@@ -114,7 +123,6 @@ const VerifyPage = () => {
 
     if (validatedFiles.length > 0) {
       setUploadingFiles(true);
-      // Simulate upload delay
       setTimeout(() => {
         setFormData(prev => ({
           ...prev,
@@ -185,7 +193,6 @@ const VerifyPage = () => {
     if (currentStep < 4) {
       setCurrentStep(currentStep + 1);
     } else {
-      // Submit application
       handleSubmit();
     }
   };
@@ -196,15 +203,41 @@ const VerifyPage = () => {
     }
   };
 
-  const handleSubmit = () => {
-    console.log('Application submitted:', formData);
-    alert('Application submitted successfully! Redirecting to dashboard...');
-    // In real app: navigate to success page or dashboard
-    navigate("/application-success");
+  const handleSubmit = async () => {
+    setIsSubmitting(true);
+
+    setTimeout(() => {
+      try {
+        const submittedApp = ApplicationService.submitApplication(formData);
+        
+        console.log('Application submitted:', submittedApp);
+        
+        alert(`✅ Application ${submittedApp.id} submitted successfully!\n\nYour application is now being reviewed. You can check the status in the bank's dashboard.`);
+        
+        setIsSubmitting(false);
+        navigate('/dashboard');
+        
+      } catch (error) {
+        console.error('Submission error:', error);
+        alert('There was an error submitting your application. Please try again.');
+        setIsSubmitting(false);
+      }
+    }, 2000);
   };
 
   return (
     <div className="verify-page">
+      {/* Submission Overlay */}
+      {isSubmitting && (
+        <div className="submission-overlay">
+          <div className="submission-modal">
+            <div className="spinner-large"></div>
+            <h2>Submitting Your Application...</h2>
+            <p>Please wait while we process your information</p>
+          </div>
+        </div>
+      )}
+
       {/* Header */}
       <header className="verify-header">
         <div className="verify-logo">
@@ -349,7 +382,6 @@ const VerifyPage = () => {
               <p className="section-subtitle">Tell us about your gig work and income sources.</p>
 
               <div className="form-content">
-                {/* Platform Selection */}
                 <div className="form-group full-width">
                   <label>Select Your Platforms</label>
                   <div className="platforms-grid">
@@ -371,7 +403,6 @@ const VerifyPage = () => {
                   {errors.platforms && <span className="error-message">{errors.platforms}</span>}
                 </div>
 
-                {/* Income Details */}
                 <div className="form-grid">
                   <div className="form-group">
                     <label htmlFor="monthlyIncome">Average Monthly Income</label>
@@ -407,7 +438,6 @@ const VerifyPage = () => {
                   </div>
                 </div>
 
-                {/* Document Upload */}
                 <div className="upload-section">
                   <h3 className="upload-title">Upload Income Documents</h3>
                   <p className="upload-subtitle">Upload screenshots or PDFs from your gig platforms (earnings summaries, 1099 forms, etc.)</p>
@@ -429,7 +459,6 @@ const VerifyPage = () => {
                   </label>
                   {errors.gigWorkDocs && <span className="error-message">{errors.gigWorkDocs}</span>}
 
-                  {/* Uploaded Files */}
                   {formData.gigWorkDocs.length > 0 && (
                     <div className="uploaded-files">
                       {formData.gigWorkDocs.map(file => (
@@ -487,7 +516,6 @@ const VerifyPage = () => {
                   </label>
                   {errors.financialDocs && <span className="error-message">{errors.financialDocs}</span>}
 
-                  {/* Document Categories */}
                   <div className="doc-categories">
                     <div className="doc-category">
                       <h4>📊 Bank Statements</h4>
@@ -503,7 +531,6 @@ const VerifyPage = () => {
                     </div>
                   </div>
 
-                  {/* Uploaded Files */}
                   {formData.financialDocs.length > 0 && (
                     <div className="uploaded-files">
                       {formData.financialDocs.map(file => (
@@ -540,7 +567,6 @@ const VerifyPage = () => {
               <p className="section-subtitle">Please review your information before submitting your application.</p>
 
               <div className="review-sections">
-                {/* Personal Information */}
                 <div className="review-section">
                   <h3 className="review-section-title">Personal Information</h3>
                   <div className="review-grid">
@@ -572,7 +598,6 @@ const VerifyPage = () => {
                   <button className="edit-btn" onClick={() => setCurrentStep(1)}>Edit</button>
                 </div>
 
-                {/* Gig Work Information */}
                 <div className="review-section">
                   <h3 className="review-section-title">Gig Work Information</h3>
                   <div className="review-grid">
@@ -600,7 +625,6 @@ const VerifyPage = () => {
                   <button className="edit-btn" onClick={() => setCurrentStep(2)}>Edit</button>
                 </div>
 
-                {/* Financial Documents */}
                 <div className="review-section">
                   <h3 className="review-section-title">Financial Documents</h3>
                   <div className="review-grid">
@@ -626,7 +650,6 @@ const VerifyPage = () => {
                   <button className="edit-btn" onClick={() => setCurrentStep(3)}>Edit</button>
                 </div>
 
-                {/* Confirmation */}
                 <div className="confirmation-box">
                   <label className="checkbox-label">
                     <input type="checkbox" required />
@@ -650,12 +673,16 @@ const VerifyPage = () => {
               <button 
                 className="btn-back" 
                 onClick={handleBack}
-                disabled={currentStep === 1}
+                disabled={currentStep === 1 || isSubmitting}
               >
                 Back
               </button>
-              <button className="btn-next" onClick={handleNextStep}>
-                {currentStep === 4 ? 'Submit Application' : 'Next Step'}
+              <button 
+                className="btn-next" 
+                onClick={handleNextStep}
+                disabled={isSubmitting}
+              >
+                {isSubmitting ? 'Submitting...' : (currentStep === 4 ? 'Submit Application' : 'Next Step')}
               </button>
             </div>
           </div>
@@ -670,6 +697,13 @@ const VerifyPage = () => {
               </svg>
               <h3>Tips for Gig Workers</h3>
             </div>
+
+            {currentStep === 1 && (
+              <div className="tip-section">
+                <h4>Why we ask for this</h4>
+                <p>We use your personal information to verify your identity and comply with federal regulations. Your data is encrypted and secure.</p>
+              </div>
+            )}
 
             {currentStep === 2 && (
               <div className="tip-section">
@@ -692,6 +726,13 @@ const VerifyPage = () => {
                   <li>📋 Tax return 2023 (Form 1040)</li>
                 </ul>
                 <p className="tip-note">Upload any PDF or image file for demo purposes</p>
+              </div>
+            )}
+
+            {currentStep === 4 && (
+              <div className="tip-section">
+                <h4>Final Steps</h4>
+                <p>Review all information carefully before submitting. You can go back to edit any section if needed.</p>
               </div>
             )}
 

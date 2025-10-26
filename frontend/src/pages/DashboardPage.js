@@ -1,12 +1,31 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import ApplicationService from '../services/ApplicationService';
 import './DashboardPage.css';
-import actionRequiredApps from '../test_data/action_required_apps.js'; 
-import allApplications from '../test_data/application_data.js'; 
 
 const DashboardPage = () => {
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState('all');
+  const [allApplications, setAllApplications] = useState([]);
+  const [actionRequiredApps, setActionRequiredApps] = useState([]);
+
+  // Load applications from localStorage on mount
+  useEffect(() => {
+    loadApplications();
+  }, []);
+
+  const loadApplications = () => {
+    const apps = ApplicationService.getAllApplications();
+    const actionApps = ApplicationService.getActionRequired();
+    
+    setAllApplications(apps);
+    setActionRequiredApps(actionApps);
+  };
+
+  // Refresh applications (call after any updates)
+  const refreshData = () => {
+    loadApplications();
+  };
 
   const getFilteredApplications = () => {
     if (activeTab === 'all') return allApplications;
@@ -23,6 +42,15 @@ const DashboardPage = () => {
       rejected: { label: 'Rejected', class: 'status-rejected' }
     };
     return statusConfig[status] || statusConfig.pending;
+  };
+
+  const handleViewDetails = (appId) => {
+    // Navigate to application details page
+    navigate(`/application-details/${appId}`);
+  };
+
+  const handleNewApplication = () => {
+    navigate('/verify');
   };
 
   return (
@@ -47,6 +75,13 @@ const DashboardPage = () => {
               <path d="M3 3H9V9H3V3ZM11 3H17V9H11V3ZM11 11H17V17H11V11ZM3 11H9V17H3V11Z" stroke="currentColor" strokeWidth="1.5"/>
             </svg>
             Dashboard
+          </button>
+          <button className="nav-item" onClick={() => navigate('/applications')}>
+            <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M6 2H14L18 6V18H2V2H6Z" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
+              <path d="M6 2V6H14" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
+            </svg>
+            Applications
           </button>
           <button className="nav-item" onClick={() => navigate('/risk-configuration')}>
             <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -94,23 +129,6 @@ const DashboardPage = () => {
               <input type="text" placeholder="Search applications..." />
             </div>
           </div>
-
-          <div className="header-right">
-            <button className="btn-new-application">New Application</button>
-            <button className="icon-btn">
-              <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M15 6.66669L10 11.6667L5 6.66669" stroke="#A9B1C2" strokeWidth="2" strokeLinecap="round"/>
-              </svg>
-            </button>
-            <button className="icon-btn">
-              <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M10 2C5.58 2 2 5.58 2 10C2 14.42 5.58 18 10 18C14.42 18 18 14.42 18 10C18 5.58 14.42 2 10 2ZM11 14H9V12H11V14ZM11 10H9V6H11V10Z" fill="#A9B1C2"/>
-              </svg>
-            </button>
-            <div className="user-avatar">
-              <img src="https://i.pravatar.cc/150?img=68" alt="User" />
-            </div>
-          </div>
         </header>
 
         {/* Content */}
@@ -118,90 +136,118 @@ const DashboardPage = () => {
           <h1 className="dashboard-title">Mortgage Application Dashboard</h1>
 
           {/* Action Required Section */}
-          <section className="action-required-section">
-            <div className="section-header-action">
-              <span className="action-badge">ACTION REQUIRED</span>
-              <h2 className="section-title">{actionRequiredApps.length} Applications Need Your Attention</h2>
-              <p className="section-subtitle">Review applications that need immediate attention to proceed.</p>
-            </div>
+          {actionRequiredApps.length > 0 && (
+            <section className="action-required-section">
+              <div className="section-header-action">
+                <span className="action-badge">ACTION REQUIRED</span>
+                <h2 className="section-title">{actionRequiredApps.length} Applications Need Your Attention</h2>
+                <p className="section-subtitle">Review applications that need immediate attention to proceed.</p>
+              </div>
 
-            <div className="action-cards">
-              {actionRequiredApps.map((app) => (
-                <div key={app.id} className="action-card">
-                  <div className="card-left">
-                    <img src={app.avatar} alt={app.name} className="applicant-avatar" />
-                    <div className="applicant-info">
-                      <h3 className="applicant-name">{app.name} - {app.status}</h3>
-                      <p className="application-id">Application ID: {app.id}</p>
+              <div className="action-cards">
+                {actionRequiredApps.map((app) => (
+                  <div key={app.id} className="action-card">
+                    <div className="card-left">
+                      <img src={app.avatar} alt={app.name} className="applicant-avatar" />
+                      <div className="applicant-info">
+                        <h3 className="applicant-name">{app.name} - {app.status}</h3>
+                        <p className="application-id">Application ID: {app.id}</p>
+                      </div>
                     </div>
+                    <button className="btn-view-details" onClick={() => handleViewDetails(app.id)}>
+                      View Details
+                    </button>
                   </div>
-                  <button className="btn-view-details">View Details</button>
-                </div>
-              ))}
-            </div>
-          </section>
-
-          {/* All Applications Section */}
-          <section className="all-applications-section">
-            <div className="section-header-apps">
-              <h2 className="section-title">All Applications</h2>
-              <div className="filter-tabs">
-                {['all', 'pending', 'approved', 'requires-action'].map(tab => (
-                  <button 
-                    key={tab}
-                    className={`filter-tab ${activeTab === tab ? 'active' : ''}`}
-                    onClick={() => setActiveTab(tab)}
-                  >
-                    {tab === 'requires-action' ? 'Requires Action' : tab.charAt(0).toUpperCase() + tab.slice(1)}
-                  </button>
                 ))}
               </div>
-            </div>
+            </section>
+          )}
 
-            <div className="applications-table-container">
-              <table className="applications-table">
-                <thead>
-                  <tr>
-                    <th>Applicant Name</th>
-                    <th>Application ID</th>
-                    <th>Submission Date</th>
-                    <th>Loan Amount</th>
-                    <th>Status</th>
-                    <th></th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {getFilteredApplications().map((app) => {
-                    const statusInfo = getStatusBadge(app.status);
-                    return (
-                      <tr key={app.id}>
-                        <td className="applicant-name-cell">{app.name}</td>
-                        <td className="app-id-cell">{app.id}</td>
-                        <td className="date-cell">{app.submissionDate}</td>
-                        <td className="amount-cell">{app.loanAmount}</td>
-                        <td>
-                          <span className={`status-badge ${statusInfo.class}`}>
-                            {statusInfo.label}
-                          </span>
-                        </td>
-                        <td>
-                          <button className="btn-view-details-table">View Details</button>
-                        </td>
-                      </tr>
-                    );
-                  })}
-                </tbody>
-              </table>
+          {/* Empty State */}
+          {allApplications.length === 0 && (
+            <div className="empty-state">
+              <svg width="120" height="120" viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <circle cx="60" cy="60" r="50" fill="#F5F7FA"/>
+                <path d="M60 35V75M45 60H75" stroke="#A9B1C2" strokeWidth="4" strokeLinecap="round"/>
+              </svg>
+              <h3>No Applications Yet</h3>
+              <p>New applications will appear here once they're submitted</p>
+              <button className="btn-create-demo" onClick={handleNewApplication}>
+                Create Demo Application
+              </button>
             </div>
+          )}
 
-            <div className="pagination">
-              <span className="pagination-info">Showing 1 to 4 of 25 results</span>
-              <div className="pagination-buttons">
-                <button className="pagination-btn" disabled>Previous</button>
-                <button className="pagination-btn">Next</button>
+          {/* All Applications Section */}
+          {allApplications.length > 0 && (
+            <section className="all-applications-section">
+              <div className="section-header-apps">
+                <h2 className="section-title">All Applications ({allApplications.length})</h2>
+                <div className="filter-tabs">
+                  {['all', 'pending', 'approved', 'requires-action'].map(tab => (
+                    <button 
+                      key={tab}
+                      className={`filter-tab ${activeTab === tab ? 'active' : ''}`}
+                      onClick={() => setActiveTab(tab)}
+                    >
+                      {tab === 'requires-action' ? 'Requires Action' : tab.charAt(0).toUpperCase() + tab.slice(1)}
+                    </button>
+                  ))}
+                </div>
               </div>
-            </div>
-          </section>
+
+              <div className="applications-table-container">
+                <table className="applications-table">
+                  <thead>
+                    <tr>
+                      <th>Applicant Name</th>
+                      <th>Application ID</th>
+                      <th>Submission Date</th>
+                      <th>Loan Amount</th>
+                      <th>Status</th>
+                      <th></th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {getFilteredApplications().map((app) => {
+                      const statusInfo = getStatusBadge(app.status);
+                      return (
+                        <tr key={app.id}>
+                          <td className="applicant-name-cell">{app.name}</td>
+                          <td className="app-id-cell">{app.id}</td>
+                          <td className="date-cell">{app.submissionDate}</td>
+                          <td className="amount-cell">{app.loanAmount}</td>
+                          <td>
+                            <span className={`status-badge ${statusInfo.class}`}>
+                              {statusInfo.label}
+                            </span>
+                          </td>
+                          <td>
+                            <button 
+                              className="btn-view-details-table"
+                              onClick={() => handleViewDetails(app.id)}
+                            >
+                              View Details
+                            </button>
+                          </td>
+                        </tr>
+                      );
+                    })}
+                  </tbody>
+                </table>
+              </div>
+
+              <div className="pagination">
+                <span className="pagination-info">
+                  Showing {getFilteredApplications().length} of {allApplications.length} results
+                </span>
+                <div className="pagination-buttons">
+                  <button className="pagination-btn" disabled>Previous</button>
+                  <button className="pagination-btn" disabled>Next</button>
+                </div>
+              </div>
+            </section>
+          )}
         </div>
       </main>
     </div>
