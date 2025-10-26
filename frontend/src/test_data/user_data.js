@@ -12,7 +12,7 @@ const userData = [
     {
         user_id: "3",
         username: "MichaelJackson", 
-        application_status: "incomplete",
+        application_status: "pending",
     }
 ]
 

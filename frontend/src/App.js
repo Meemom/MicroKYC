@@ -13,6 +13,7 @@ function App() {
         <Route path="/" element={<LandingPage />} />
         <Route path="/bank-login" element={<BankLogin />} />
         <Route path="/user-login" element={<UserLogin />} />
+        <Route path="/application" element={<ApplicationResultsPage />} />
         <Route path="/verify" element={<VerifyPage />} />
         <Route path="/dashboard" element={<DashboardPage />} />
       </Routes>

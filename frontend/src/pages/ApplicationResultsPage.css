@@ -1,0 +1,396 @@
+/* ApplicationStatusPage.css */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+
+/* Color Variables */
+:root {
+  --primary-blue: #1A2B4C;
+  --secondary-blue: #1976D2;
+  --white: #FFFFFF;
+  --subtle-grey: #A9B1C2;
+  --light-background: #F5F7FA;
+  --border-color: #E5E7EB;
+  --success-green: #10B981;
+  --error-red: #EF4444;
+  --warning-orange: #F59E0B;
+}
+
+.status-page {
+  min-height: 100vh;
+  background-color: var(--light-background);
+  font-family: 'Inter', sans-serif;
+}
+
+/* Header */
+.status-header {
+  background-color: var(--white);
+  padding: 20px 48px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.status-logo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.status-logo-text {
+  font-size: 24px;
+  font-weight: 700;
+  color: var(--primary-blue);
+}
+
+.status-nav {
+  display: flex;
+  align-items: center;
+  gap: 32px;
+}
+
+.nav-link {
+  background: none;
+  border: none;
+  font-size: 15px;
+  font-weight: 500;
+  color: var(--primary-blue);
+  cursor: pointer;
+  font-family: 'Inter', sans-serif;
+  transition: color 0.2s;
+  padding: 0;
+}
+
+.nav-link:hover {
+  color: var(--secondary-blue);
+}
+
+.icon-btn-nav {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  border: none;
+  background-color: var(--light-background);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.icon-btn-nav:hover {
+  background-color: var(--border-color);
+}
+
+.user-avatar-nav {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  overflow: hidden;
+  cursor: pointer;
+  border: 2px solid var(--border-color);
+}
+
+.user-avatar-nav img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* Main Content */
+.status-main {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: calc(100vh - 81px);
+  padding: 60px 24px;
+}
+
+.status-card {
+  background-color: var(--white);
+  border-radius: 24px;
+  padding: 60px;
+  max-width: 900px;
+  width: 100%;
+  box-shadow: 0 4px 24px rgba(26, 43, 76, 0.08);
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* Status Icon */
+.status-icon-container {
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 32px;
+  animation: fadeInScale 0.5s ease-out;
+}
+
+@keyframes fadeInScale {
+  from {
+    opacity: 0;
+    transform: scale(0.8);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* Status Title */
+.status-title {
+  font-size: 40px;
+  font-weight: 800;
+  color: var(--primary-blue);
+  margin-bottom: 12px;
+  letter-spacing: -0.5px;
+  animation: fadeInUp 0.6s ease-out 0.1s both;
+}
+
+.status-subtitle {
+  font-size: 18px;
+  color: var(--subtle-grey);
+  margin-bottom: 48px;
+  animation: fadeInUp 0.6s ease-out 0.2s both;
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Next Steps Section */
+.next-steps-section {
+  width: 100%;
+  margin-bottom: 48px;
+  text-align: left;
+}
+
+.next-steps-title {
+  font-size: 24px;
+  font-weight: 700;
+  color: var(--primary-blue);
+  margin-bottom: 32px;
+  text-align: center;
+}
+
+.next-steps-list {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.next-step-item {
+  display: flex;
+  gap: 20px;
+  padding: 24px;
+  background-color: var(--light-background);
+  border-radius: 16px;
+  transition: all 0.3s ease;
+  animation: fadeInUp 0.6s ease-out both;
+}
+
+.next-step-item:nth-child(1) {
+  animation-delay: 0.3s;
+}
+
+.next-step-item:nth-child(2) {
+  animation-delay: 0.4s;
+}
+
+.next-step-item:hover {
+  background-color: #E8F4FD;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(25, 118, 210, 0.1);
+}
+
+.step-icon {
+  flex-shrink: 0;
+  width: 56px;
+  height: 56px;
+  background-color: #E3F2FD;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.step-content {
+  flex: 1;
+}
+
+.step-title {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--primary-blue);
+  margin-bottom: 8px;
+}
+
+.step-description {
+  font-size: 15px;
+  color: var(--subtle-grey);
+  line-height: 1.6;
+}
+
+/* Return Button */
+.btn-return-dashboard {
+  padding: 16px 48px;
+  background-color: var(--secondary-blue);
+  color: var(--white);
+  border: none;
+  border-radius: 12px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  font-family: 'Inter', sans-serif;
+  transition: all 0.3s ease;
+  margin-bottom: 24px;
+  animation: fadeInUp 0.6s ease-out 0.5s both;
+}
+
+.btn-return-dashboard:hover {
+  background-color: #1565C0;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(25, 118, 210, 0.3);
+}
+
+/* Application Info */
+.application-info {
+  font-size: 14px;
+  color: var(--subtle-grey);
+  animation: fadeInUp 0.6s ease-out 0.6s both;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .status-header {
+    padding: 16px 24px;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .status-nav {
+    width: 100%;
+    justify-content: space-between;
+    gap: 16px;
+  }
+
+  .nav-link {
+    font-size: 14px;
+  }
+
+  .status-main {
+    padding: 40px 20px;
+    min-height: auto;
+  }
+
+  .status-card {
+    padding: 40px 28px;
+  }
+
+  .status-icon-container {
+    width: 100px;
+    height: 100px;
+    margin-bottom: 24px;
+  }
+
+  .status-icon-container svg {
+    width: 40px;
+    height: 40px;
+  }
+
+  .status-title {
+    font-size: 32px;
+  }
+
+  .status-subtitle {
+    font-size: 16px;
+    margin-bottom: 36px;
+  }
+
+  .next-steps-title {
+    font-size: 20px;
+  }
+
+  .next-step-item {
+    flex-direction: column;
+    text-align: center;
+    padding: 20px;
+  }
+
+  .step-icon {
+    margin: 0 auto;
+  }
+
+  .btn-return-dashboard {
+    width: 100%;
+    padding: 14px 32px;
+  }
+}
+
+@media (max-width: 480px) {
+  .status-logo-text {
+    font-size: 20px;
+  }
+
+  .status-card {
+    padding: 32px 20px;
+  }
+
+  .status-title {
+    font-size: 28px;
+  }
+
+  .status-subtitle {
+    font-size: 15px;
+  }
+
+  .next-steps-title {
+    font-size: 18px;
+  }
+
+  .step-title {
+    font-size: 16px;
+  }
+
+  .step-description {
+    font-size: 14px;
+  }
+
+  .step-icon {
+    width: 48px;
+    height: 48px;
+  }
+
+  .step-icon svg {
+    width: 20px;
+    height: 20px;
+  }
+}
+
+/* Print Styles */
+@media print {
+  .status-header,
+  .btn-return-dashboard {
+    display: none;
+  }
+
+  .status-page {
+    background-color: var(--white);
+  }
+
+  .status-card {
+    box-shadow: none;
+    padding: 20px;
+  }
+}
