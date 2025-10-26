@@ -1,7 +1,9 @@
 from fastapi import FastAPI, UploadFile, File, HTTPException
 from app.routes import verify, analytics
-from app.services.ocr_proc import process_image  # <-- updated import
-from app.models.ocr_models import OCRResult  # <-- if you’re using this model
+from app.services.gemini_service import process_file
+
+import tempfile
+import mimetypes
 
 app = FastAPI(title="gitIT API", version="1.0")
 
@@ -13,18 +15,28 @@ app.include_router(analytics.router, prefix="/analytics", tags=["Analytics"])
 def root():
     return {"message": "gitIT backend is running"}
 
-@app.post("/ocr", response_model=OCRResult)
-async def ocr_endpoint(file: UploadFile = File(...)):
-    """Upload an image and extract text using Tesseract OCR."""
+@app.post("/process_file")
+async def process_file_endpoint(file: UploadFile = File(...)):
     try:
-        # Save uploaded file temporarily
-        contents = await file.read()
-        with open(f"/tmp/{file.filename}", "wb") as f:
-            f.write(contents)
+        # Save the uploaded file temporarily
+        suffix = mimetypes.guess_extension(file.content_type) or ""
+        with tempfile.NamedTemporaryFile(delete=False, suffix=suffix) as tmp:
+            contents = await file.read()
+            tmp.write(contents)
+            tmp_path = tmp.name
 
-        # Process OCR
-        result = process_image(f"/tmp/{file.filename}")
-        return result
+        # Determine file type
+        content_type = file.content_type
+        if "pdf" in content_type:
+            file_type = "pdf"
+        elif "image" in content_type:
+            file_type = "image"
+        else:
+            file_type = "text"
+
+        # Process the file via Gemini
+        response = process_file(tmp_path, file_type=file_type)
+        return {"gemini_response": response}
 
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
