@@ -117,12 +117,11 @@ const RiskConfiguration = () => {
         <div className="sidebar-header">
           <div className="sidebar-logo">
             <svg width="40" height="40" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <circle cx="16" cy="16" r="14" fill="#10B981" stroke="#10B981" strokeWidth="2"/>
-              <path d="M10 16L14 20L22 12" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/>
+            <path d="M16 4L4 10V16C4 23 10 28 16 28C22 28 28 23 28 16V10L16 4Z" fill="#1A2B4C"/>
+            <path d="M16 12C14.9 12 14 12.9 14 14V18C14 19.1 14.9 20 16 20C17.1 20 18 19.1 18 18V14C18 12.9 17.1 12 16 12Z" fill="white"/>
             </svg>
             <div>
               <div className="sidebar-title">GigIT</div>
-              <div className="sidebar-subtitle">for Banks</div>
             </div>
           </div>
         </div>
@@ -133,13 +132,6 @@ const RiskConfiguration = () => {
               <path d="M3 3H9V9H3V3ZM11 3H17V9H11V3ZM11 11H17V17H11V11ZM3 11H9V17H3V11Z" stroke="currentColor" strokeWidth="1.5"/>
             </svg>
             Dashboard
-          </button>
-          <button className="nav-item" onClick={() => navigate('/applications')}>
-            <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <path d="M6 2H14L18 6V18H2V2H6Z" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
-              <path d="M6 2V6H14" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
-            </svg>
-            Applications
           </button>
           <button className="nav-item active">
             <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">

@@ -40,32 +40,32 @@ const UserLogin = () => {
 
   const handleSignUp = (e) => {
     e.preventDefault();
-
+  
     // Validation
     if (username.length < 3) {
       setError('Username must be at least 3 characters');
       return;
     }
-
+  
     if (password.length < 3) {
       setError('Password must be at least 3 characters');
       return;
     }
-
+  
     if (password !== confirmPassword) {
       setError('Passwords do not match');
       return;
     }
-
+  
     // Check if username already exists
     const existingUser = userData.find(u => u.username === username);
     if (existingUser) {
       setError('Username already exists');
       return;
     }
-
+  
     setError('');
-
+  
     // Create new user with pending status
     const newUser = {
       user_id: String(userData.length + 1),
@@ -73,16 +73,17 @@ const UserLogin = () => {
       application_status: 'pending',
       password: password
     };
-
+  
     // Add to userData array (for demo purposes)
     userData.push(newUser);
-
+  
     // Save to local storage
     localStorage.setItem("loggedInUser", JSON.stringify(newUser));
-
-    // Navigate to application results
-    navigate('/application-results', { state: { user: newUser } });
+  
+    // ✅ Navigate to VerifyPage instead of application-results
+    navigate('/verify', { state: { user: newUser } });
   };
+  
 
   const toggleMode = () => {
     setIsSignUp(!isSignUp);
