@@ -1,7 +1,6 @@
 import pytesseract
 from fastapi import UploadFile
-from models.ocr_models import OCRResult
-
+from models.ocr_models import OCRResult  # optional if you have this model
 
 async def extract_text(file: UploadFile) -> str:
     # Save uploaded file temporarily
@@ -9,9 +8,6 @@ async def extract_text(file: UploadFile) -> str:
     with open(f"/tmp/{file.filename}", "wb") as f:
         f.write(contents)
 
-
     # OCR extraction
     text = pytesseract.image_to_string(f"/tmp/{file.filename}")
-
-
     return text
