@@ -1,6 +1,6 @@
 from fastapi import FastAPI, UploadFile, File
-from routes import verify, analytics
-from services.ocr_service import extract_text
+from app.routes import verify, analytics
+from app.services.ocr_service import extract_text
 
 app = FastAPI(title="gitIT API", version="1.0")
 
