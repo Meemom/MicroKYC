@@ -30,7 +30,7 @@ async def parse_document(text: str) -> dict:
 
     try:
         response = client.models.generate_content(
-            model=os.getenv("GEMINI_MODEL", "gemini-1.5-pro"),
+            model=os.getenv("GEMINI_MODEL", "gemini-2.5-pro"),
             contents=prompt
         )
 

@@ -92,7 +92,7 @@ Text:
 """
     try:
         response = client.models.generate_content(
-            model="gemini-1.5-pro",
+            model="gemini-2.5-pro",
             contents=prompt
         )
         text = getattr(response, "text", str(response))
