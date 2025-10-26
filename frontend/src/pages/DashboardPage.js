@@ -151,33 +151,6 @@ const DashboardPage = () => {
               <input type="text" placeholder="Search applications by name, ID, or amount..." />
             </div>
           </div>
-
-          <div className="header-right">
-            <button className="btn-new-application" onClick={handleNewApplication}>
-              <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M10 4V16M4 10H16" stroke="white" strokeWidth="2" strokeLinecap="round"/>
-              </svg>
-              New Application
-            </button>
-            <button className="icon-btn" onClick={refreshData} title="Refresh">
-              <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M17 10C17 13.866 13.866 17 10 17C6.13401 17 3 13.866 3 10C3 6.13401 6.13401 3 10 3C11.5719 3 13.0239 3.5 14.1921 4.35L16 3" stroke="#A9B1C2" strokeWidth="2" strokeLinecap="round"/>
-                <path d="M16 3V7H12" stroke="#A9B1C2" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-              </svg>
-            </button>
-            <button className="icon-btn" title="Notifications">
-              <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M15 6C15 4.67392 14.4732 3.40215 13.5355 2.46447C12.5979 1.52678 11.3261 1 10 1C8.67392 1 7.40215 1.52678 6.46447 2.46447C5.52678 3.40215 5 4.67392 5 6C5 12 2 14 2 14H18C18 14 15 12 15 6Z" stroke="#A9B1C2" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-                <path d="M11.73 17C11.5542 17.3031 11.3019 17.5547 10.9982 17.7295C10.6946 17.9044 10.3504 17.9965 10 17.9965C9.64964 17.9965 9.30541 17.9044 9.00179 17.7295C8.69818 17.5547 8.44583 17.3031 8.27002 17" stroke="#A9B1C2" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-              </svg>
-              {actionRequiredApps.length > 0 && (
-                <span className="notification-badge">{actionRequiredApps.length}</span>
-              )}
-            </button>
-            <div className="user-avatar">
-              <img src="https://i.pravatar.cc/150?img=68" alt="User" />
-            </div>
-          </div>
         </header>
 
         {/* Content */}

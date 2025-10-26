@@ -133,13 +133,6 @@ const RiskConfiguration = () => {
             </svg>
             Dashboard
           </button>
-          <button className="nav-item" onClick={() => navigate('/applications')}>
-            <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <path d="M6 2H14L18 6V18H2V2H6Z" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
-              <path d="M6 2V6H14" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
-            </svg>
-            Applications
-          </button>
           <button className="nav-item active">
             <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
               <path d="M10 2L3 6V10C3 14.5 6.5 18 10 18C13.5 18 17 14.5 17 10V6L10 2Z" stroke="currentColor" strokeWidth="1.5"/>
