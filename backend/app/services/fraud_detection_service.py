@@ -5,12 +5,14 @@ import statistics
 from typing import Dict, Optional
 
 from dotenv import load_dotenv
-from google import genai
+import google.generativeai as genai
+# from google import genai
 
 from app.models.risk_models import RiskAssessment
 
 load_dotenv()
-client = genai.Client(api_key=os.getenv("GEMINI_API_KEY"))
+
+client = genai.configure(api_key=os.getenv("GEMINI_API_KEY"))
 
 # default weights (can be overridden by caller)
 DEFAULT_WEIGHTS = {
@@ -90,7 +92,7 @@ Text:
 {raw_text}
 """
     try:
-        model = genai.GenerativeModel("gemini-1.5-flash")
+        model = genai.GenerativeModel("gemini-2.5-pro")
         response = model.generate_content(prompt)
         text = response.text
         start = text.find("{")

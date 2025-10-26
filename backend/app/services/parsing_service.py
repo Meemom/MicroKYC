@@ -29,7 +29,7 @@ async def parse_document(text: str) -> dict:
     """
 
     try:
-        model = genai.GenerativeModel(os.getenv("GEMINI_MODEL", "gemini-1.5-flash"))
+        model = genai.GenerativeModel(os.getenv("GEMINI_MODEL", "gemini-2.5-pro"))
         response = model.generate_content(prompt)
 
         # Gemini might return natural language text, so we’ll try to extract the JSON cleanly

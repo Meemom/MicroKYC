@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import ApplicationService from '../services/ApplicationService';
 import './VerifyPage.css';
+import BackendAPIService from '../services/BackendAPIService';
 
 const VerifyPage = () => {
   const navigate = useNavigate();
@@ -92,14 +93,22 @@ const VerifyPage = () => {
     return { valid: true };
   };
 
-  const handleFileUpload = (e, category) => {
+  const handleFileUpload = async (e, category) => {
     const files = Array.from(e.target.files);
     const validatedFiles = [];
     const fileErrors = [];
 
-    files.forEach(file => {
+    for (const file of files) {
       const validation = validateFile(file);
-      if (validation.valid) {
+      if (!validation.valid) {
+        fileErrors.push(`${file.name}: ${validation.error}`);
+        continue;
+      }
+
+      try {
+        // Send to backend
+        const result = await BackendAPIService.verifyGigWorkerDocument(file);
+
         validatedFiles.push({
           id: Date.now() + Math.random(),
           name: file.name,
@@ -107,12 +116,13 @@ const VerifyPage = () => {
           type: file.type,
           uploadDate: new Date().toISOString(),
           status: 'verified',
+          verificationData: result,  // store backend results
           file: file
         });
-      } else {
-        fileErrors.push(`${file.name}: ${validation.error}`);
+      } catch (error) {
+        fileErrors.push(`${file.name}: ${error.message}`);
       }
-    });
+    }
 
     if (fileErrors.length > 0) {
       setErrors(prev => ({
@@ -122,31 +132,13 @@ const VerifyPage = () => {
     }
 
     if (validatedFiles.length > 0) {
-      setUploadingFiles(true);
-      setTimeout(() => {
-        setFormData(prev => ({
-          ...prev,
-          [category]: [...prev[category], ...validatedFiles]
-        }));
-        setUploadingFiles(false);
-      }, 1000);
+      setFormData(prev => ({
+        ...prev,
+        [category]: [...prev[category], ...validatedFiles]
+      }));
     }
   };
 
-  const handleRemoveFile = (category, fileId) => {
-    setFormData(prev => ({
-      ...prev,
-      [category]: prev[category].filter(file => file.id !== fileId)
-    }));
-  };
-
-  const formatFileSize = (bytes) => {
-    if (bytes === 0) return '0 Bytes';
-    const k = 1024;
-    const sizes = ['Bytes', 'KB', 'MB'];
-    const i = Math.floor(Math.log(bytes) / Math.log(k));
-    return Math.round(bytes / Math.pow(k, i) * 100) / 100 + ' ' + sizes[i];
-  };
 
   const handleNextStep = () => {
     const newErrors = {};
@@ -206,27 +198,39 @@ const VerifyPage = () => {
 
   const handleSubmit = async () => {
     setIsSubmitting(true);
+  
+    const applicationData = {
+      id: Date.now(),
+      ...formData,
+      submittedAt: new Date().toISOString(),
+      status: 'pending'
+    };
+  
+    const existing = JSON.parse(localStorage.getItem('applications') || '[]');
+    existing.push(applicationData);
+    localStorage.setItem('applications', JSON.stringify(existing));
+  
+    alert(`✅ Application submitted successfully!`);
+  
+    setIsSubmitting(false);
+    navigate('/user-login'); // or your dashboard page
+  };  
 
-    setTimeout(() => {
-      try {
-        const submittedApp = ApplicationService.submitApplication(formData);
-        
-        console.log('Application submitted:', submittedApp);
-        
-        const selectedBank = availableBanks.find(bank => bank.id === formData.bankId);
-        
-        alert(`✅ Application ${submittedApp.id} submitted successfully!\n\nYour application has been sent to ${selectedBank?.name || 'the bank'}.\n\nYou can check the status in the bank's dashboard by logging in with Bank ID: ${formData.bankId}`);
-        
-        setIsSubmitting(false);
-        navigate('/user-login');
-        
-      } catch (error) {
-        console.error('Submission error:', error);
-        alert('There was an error submitting your application. Please try again.');
-        setIsSubmitting(false);
-      }
-    }, 2000);
+  const handleRemoveFile = (category, fileId) => {
+    setFormData(prev => ({
+      ...prev,
+      [category]: prev[category].filter(file => file.id !== fileId)
+    }));
   };
+
+  const formatFileSize = (bytes) => {
+    if (bytes === 0) return '0 Bytes';
+    const k = 1024;
+    const sizes = ['Bytes', 'KB', 'MB'];
+    const i = Math.floor(Math.log(bytes) / Math.log(k));
+    return Math.round(bytes / Math.pow(k, i) * 100) / 100 + ' ' + sizes[i];
+  };
+  
 
   return (
     <div className="verify-page">

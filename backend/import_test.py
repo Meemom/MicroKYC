@@ -1,7 +1,7 @@
 try:
     from app.routes import analytics
     from app.routes import ocr_routes
-    from app.routes import verify
+    from . import verify
     from app.services import fraud_detection_service
     from app.services import gemini_service
     from app.services import ocr_proc

@@ -1,7 +1,6 @@
 import google.generativeai as genai
 from PyPDF2 import PdfReader
 from PIL import Image
-import pytesseract  # Optional, only if you want local OCR fallback
 import os
 
 # Initialize Gemini client
@@ -13,7 +12,7 @@ def process_file(file_path: str, file_type: str = "text") -> str:
     Supports 'pdf', 'image', and plain 'text' files.
     Returns extracted or generated content.
     """
-    model = genai.GenerativeModel("gemini-1.5-flash")
+    model = genai.GenerativeModel('gemini-2.5-pro')
     if file_type == "pdf":
         # Extract text from PDF locally
         reader = PdfReader(file_path)
