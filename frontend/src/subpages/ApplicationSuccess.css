@@ -1,0 +1,69 @@
+.success-container {
+    background-color: var(--primary-blue);
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 40px;
+  }
+  
+  .success-card {
+    background-color: var(--white);
+    border-radius: 16px;
+    padding: 60px 50px;
+    max-width: 500px;
+    width: 100%;
+    text-align: center;
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+    animation: fadeIn 0.7s ease-in-out;
+  }
+  
+  .success-icon {
+    color: var(--primary-blue);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 24px;
+  }
+  
+  .success-title {
+    font-size: 28px;
+    color: var(--primary-blue);
+    font-weight: 700;
+    margin-bottom: 16px;
+  }
+  
+  .success-message {
+    font-size: 16px;
+    color: #333;
+    line-height: 1.6;
+    margin-bottom: 32px;
+  }
+  
+  .success-button {
+    background-color: var(--primary-blue);
+    color: var(--white);
+    font-size: 16px;
+    padding: 12px 24px;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: all 0.25s ease;
+  }
+  
+  .success-button:hover {
+    background-color: #003a7a;
+    transform: translateY(-2px);
+  }
+  
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+      transform: translateY(10px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+  

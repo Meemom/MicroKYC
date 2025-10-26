@@ -68,18 +68,52 @@ const LandingPage = () => {
         </div>
       </section>
 
-      {/* Features Section */}
+      {/* Benefits Section */}
       <section className="features">
+      <div className="feature-left">
+        <h3 className="feature-title">Benefits</h3>
+      </div>
+
+      <div className="feature-right">
         <div className="feature-item">
-          <h3 className="feature-title">Automated Income<br />Verification</h3>
+          <div class="feature-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M20 6L9 17l-5-5" />
+            </svg>
+          </div>
+          <div className="feature-text">
+            <h4 className="feature-body">Minimize reliance on technical resources.</h4>
+            <p className="feature-description">
+              Empowers any team member to design and automate workflows — from task assignments to integrations.
+            </p>
+          </div>
         </div>
+
         <div className="feature-item">
-          <h3 className="feature-title">Bank-Ready<br />Reports</h3>
+          <div class="feature-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M20 6L9 17l-5-5" />
+            </svg>
+          </div>
+          <div className="feature-text">
+            <h4 className="feature-body">Bank-Ready Reports.</h4>
+            <p className="feature-description">Generate structured, regulator-friendly reports formatted for quick review.</p>
+          </div>
         </div>
+
         <div className="feature-item">
-          <h3 className="feature-title">Fairer<br />Assessments</h3>
+          <div class="feature-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M20 6L9 17l-5-5" />
+            </svg>
+          </div>
+          <div className="feature-text">
+            <h4 className="feature-body">Fairer Assessments.</h4>
+            <p className="feature-description">Ensure consistent income checks across applicants, reducing bias.</p>
+          </div>
         </div>
-      </section>
+      </div>
+    </section>
 
       {/* Trust Section */}
       <section className="trust">
