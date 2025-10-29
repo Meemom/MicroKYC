@@ -38,12 +38,15 @@ We noticed that freelancers often face delays in getting verified by banks becau
 - Created a solution specifically for **freelancers**, a group often overlooked in traditional banking systems  
 
 ---
-
 ## Next Steps
 - Expand AI capabilities to handle more document types and international forms  
 - Add a frontend dashboard for users and banks to track verification status  
 - Implement authentication and security for sensitive document handling  
-- Optimize AI processing for faster response times  
+- Optimize AI processing for faster response times
+
+---
+## License / Access
+This repository is view-only. All rights reserved by Jemima Silaen, Vriti Dahiya, Sansita Malhotra. No copying, redistribution, or derivative works are permitted without prior written consent. See LICENSE for details.
 
 ---
 
@@ -52,3 +55,5 @@ We noticed that freelancers often face delays in getting verified by banks becau
 ```bash
 git clone <repo-url>
 cd backend
+
+
